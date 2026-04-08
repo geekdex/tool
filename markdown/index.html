@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown编辑器 - Tekio工具集</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../components/shared-styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../components/load-components.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+        body { background-color: #f0f2f5; color: #333; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+        .container { max-width: 100%; margin: 0 auto; padding: 0 20px; flex: 1; display: flex; flex-direction: column; }
+        main { padding: 20px 0; flex: 1; display: flex; flex-direction: column; }
+        .page-header { text-align: center; margin-bottom: 16px; }
+        .page-title { font-size: 1.5rem; color: var(--dark-color); margin-bottom: 4px; }
+        .page-subtitle { color: var(--gray-color); font-size: 0.9rem; }
+
+        /* 工具栏 */
+        .toolbar {
+            display: flex; gap: 4px; padding: 8px 12px; background: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0; border: 1px solid #e9ecef;
+            border-bottom: none; flex-wrap: wrap; align-items: center;
+        }
+        .toolbar-btn {
+            width: 34px; height: 34px; border: none; border-radius: 6px; cursor: pointer;
+            background: transparent; color: #555; font-size: 0.85rem; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .toolbar-btn:hover { background: rgba(67,97,238,0.1); color: var(--primary-color); }
+        .toolbar-sep { width: 1px; height: 20px; background: #e9ecef; margin: 0 4px; }
+
+        /* 编辑器 */
+        .editor-wrap {
+            flex: 1; display: flex; background: white; border: 1px solid #e9ecef;
+            border-radius: 0 0 var(--border-radius) var(--border-radius); overflow: hidden; min-height: 500px;
+        }
+        .editor-pane {
+            flex: 1; display: flex; flex-direction: column; min-width: 0;
+        }
+        .editor-pane-header {
+            padding: 8px 14px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;
+            font-size: 0.8rem; font-weight: 600; color: var(--gray-color); text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .divider { width: 1px; background: #e9ecef; }
+        #editor {
+            flex: 1; padding: 16px; border: none; resize: none; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem; line-height: 1.7; outline: none;
+        }
+        #preview {
+            flex: 1; padding: 16px; overflow-y: auto; font-size: 0.95rem; line-height: 1.8;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            display: flex; justify-content: space-between; padding: 8px 16px;
+            background: #f8f9fa; border-top: 1px solid #e9ecef; font-size: 0.8rem; color: var(--gray-color);
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        /* Markdown preview styles */
+        #preview h1 { font-size: 1.8rem; border-bottom: 2px solid #e9ecef; padding-bottom: 8px; margin: 24px 0 12px; }
+        #preview h2 { font-size: 1.4rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 6px; margin: 20px 0 10px; }
+        #preview h3 { font-size: 1.2rem; margin: 16px 0 8px; }
+        #preview p { margin: 8px 0; }
+        #preview ul, #preview ol { padding-left: 24px; margin: 8px 0; }
+        #preview li { margin: 4px 0; }
+        #preview code { background: #f1f3f5; padding: 2px 6px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 0.88em; color: #d6336c; }
+        #preview pre { background: #1e1e2e; color: #cdd6f4; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; }
+        #preview pre code { background: none; color: inherit; padding: 0; }
+        #preview blockquote { border-left: 4px solid var(--primary-color); padding: 8px 16px; margin: 12px 0; background: rgba(67,97,238,0.03); color: #555; }
+        #preview table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+        #preview th { background: var(--primary-color); color: white; padding: 10px 14px; text-align: left; }
+        #preview td { padding: 8px 14px; border-bottom: 1px solid #e9ecef; }
+        #preview a { color: var(--primary-color); }
+        #preview img { max-width: 100%; border-radius: 8px; }
+        #preview hr { border: none; border-top: 2px solid #e9ecef; margin: 24px 0; }
+
+        @media (max-width: 768px) {
+            .editor-wrap { flex-direction: column; min-height: 400px; }
+            .divider { width: 100%; height: 1px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+    <main class="container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fab fa-markdown" style="color:#06d6a0;"></i> Markdown编辑器</h1>
+            <p class="page-subtitle">实时预览，支持常用 Markdown 语法</p>
+        </div>
+
+        <div style="flex:1;display:flex;flex-direction:column;">
+            <div class="toolbar">
+                <button class="toolbar-btn" title="加粗" onclick="insertMd('**','**')"><i class="fas fa-bold"></i></button>
+                <button class="toolbar-btn" title="斜体" onclick="insertMd('*','*')"><i class="fas fa-italic"></i></button>
+                <button class="toolbar-btn" title="删除线" onclick="insertMd('~~','~~')"><i class="fas fa-strikethrough"></i></button>
+                <div class="toolbar-sep"></div>
+                <button class="toolbar-btn" title="标题1" onclick="insertLine('# ')"><b>H1</b></button>
+                <button class="toolbar-btn" title="标题2" onclick="insertLine('## ')"><b>H2</b></button>
+                <button class="toolbar-btn" title="标题3" onclick="insertLine('### ')"><b>H3</b></button>
+                <div class="toolbar-sep"></div>
+                <button class="toolbar-btn" title="无序列表" onclick="insertLine('- ')"><i class="fas fa-list-ul"></i></button>
+                <button class="toolbar-btn" title="有序列表" onclick="insertLine('1. ')"><i class="fas fa-list-ol"></i></button>
+                <button class="toolbar-btn" title="引用" onclick="insertLine('> ')"><i class="fas fa-quote-left"></i></button>
+                <div class="toolbar-sep"></div>
+                <button class="toolbar-btn" title="链接" onclick="insertMd('[','](url)')"><i class="fas fa-link"></i></button>
+                <button class="toolbar-btn" title="图片" onclick="insertMd('![alt](',')')"><i class="fas fa-image"></i></button>
+                <button class="toolbar-btn" title="代码" onclick="insertMd('\`','\`')"><i class="fas fa-code"></i></button>
+                <button class="toolbar-btn" title="代码块" onclick="insertMd('\n```\n','\n```\n')"><i class="fas fa-file-code"></i></button>
+                <button class="toolbar-btn" title="分割线" onclick="insertLine('---\n')"><i class="fas fa-minus"></i></button>
+                <div class="toolbar-sep"></div>
+                <button class="toolbar-btn" title="复制HTML" onclick="copyHtml()" style="margin-left:auto;"><i class="fas fa-copy"></i></button>
+            </div>
+
+            <div class="editor-wrap">
+                <div class="editor-pane">
+                    <div class="editor-pane-header">Markdown</div>
+                    <textarea id="editor" spellcheck="false"></textarea>
+                </div>
+                <div class="divider"></div>
+                <div class="editor-pane">
+                    <div class="editor-pane-header">Preview</div>
+                    <div id="preview"></div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <span id="charCount">0 字符</span>
+                <span id="wordCount">0 词</span>
+                <span id="lineCount">0 行</span>
+            </div>
+        </div>
+    </main>
+    <div id="footer-container"></div>
+
+    <script>
+        const defaultMd = `# Markdown编辑器
+
+欢迎使用 **Tekio工具集** 的 Markdown 编辑器！
+
+## 功能特性
+
+- 实时预览
+- 工具栏快捷操作
+- 支持常见 Markdown 语法
+
+### 代码示例
+
+\`\`\`javascript
+function hello() {
+    console.log("Hello, Markdown!");
+}
+\`\`\`
+
+### 引用
+
+> 这是一段引用文本，Markdown 让写作更高效。
+
+### 表格
+
+| 功能 | 状态 |
+|------|------|
+| 实时预览 | 已完成 |
+| 工具栏 | 已完成 |
+| 导出HTML | 已完成 |
+
+---
+
+*使用左侧工具栏快速插入语法，右侧实时预览效果。*
+`;
+
+        const editor = document.getElementById('editor');
+        const preview = document.getElementById('preview');
+        let debounceTimer;
+
+        function updatePreview() {
+            const text = editor.value;
+            try { preview.innerHTML = marked.parse(text); } catch(e) { preview.textContent = text; }
+            updateStats(text);
+        }
+
+        function updateStats(text) {
+            document.getElementById('charCount').textContent = text.length + ' 字符';
+            document.getElementById('wordCount').textContent = (text.trim() ? text.trim().split(/\s+/).length : 0) + ' 词';
+            document.getElementById('lineCount').textContent = text.split('\n').length + ' 行';
+        }
+
+        function insertMd(before, after) {
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selected = editor.value.substring(start, end);
+            const replacement = before + (selected || '文本') + after;
+            editor.setRangeText(replacement, start, end, 'end');
+            editor.focus();
+            updatePreview();
+        }
+
+        function insertLine(prefix) {
+            const start = editor.selectionStart;
+            const before = editor.value.substring(0, start);
+            const needNewline = before.length > 0 && !before.endsWith('\n');
+            const insert = (needNewline ? '\n' : '') + prefix;
+            editor.setRangeText(insert, start, start, 'end');
+            editor.focus();
+            updatePreview();
+        }
+
+        function copyHtml() {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(preview.innerHTML);
+            }
+        }
+
+        editor.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(updatePreview, 150);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof ComponentLoader !== 'undefined') {
+                ComponentLoader.initPage({ loadHeader: true, loadFooter: true, headerTarget: 'header-container', footerTarget: 'footer-container', activeNav: 'tools', basePath: '../components/', toolName: 'Markdown编辑器' });
+            }
+            if (typeof marked !== 'undefined') {
+                marked.setOptions({ breaks: true, gfm: true });
+            }
+            editor.value = defaultMd;
+            updatePreview();
+        });
+    </script>
+</body>
+</html>

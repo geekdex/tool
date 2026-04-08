@@ -25,7 +25,7 @@
     "description": "JSON数据格式化、验证和压缩工具，支持语法高亮和错误提示。",
     "icon": "fas fa-code",
     "iconColor": "#ff9e00",
-    "link": "https://www.bejson.com/json/format/",
+    "link": "/json",
     "tags": ["开发", "数据", "格式化"],
     "category": "development"
   },
@@ -35,7 +35,7 @@
     "description": "强大的颜色选择器，支持多种颜色格式，提供调色板和颜色方案生成。",
     "icon": "fas fa-palette",
     "iconColor": "#ff6b6b",
-    "link": "https://www.materialpalette.com/colors",
+    "link": "/color",
     "tags": ["设计", "颜色", "调色板"],
     "category": "design"
   },
@@ -45,27 +45,27 @@
     "description": "生成高强度随机密码，支持自定义长度和字符类型，确保账户安全。",
     "icon": "fas fa-key",
     "iconColor": "#3f37c9",
-    "link": "https://www.lddgo.net/string/randompassword",
+    "link": "/password",
     "tags": ["安全", "工具", "生成"],
     "category": "development"
   },
   {
     "id": 6,
-    "name": "rabtab查询器",
+    "name": "Crontab查询器",
     "description": "cron定时表达式快速简易编辑器。",
-    "icon": "fas fa-qrcode",
+    "icon": "fas fa-clock",
     "iconColor": "#4895ef",
-    "link": "https://crontab.guru/",
-    "tags": ["工具", "查询"],
+    "link": "/crontab",
+    "tags": ["工具", "查询", "定时"],
     "category": "development"
   },
   {
     "id": 7,
     "name": "Markdown编辑器",
     "description": "在线Markdown编辑器，实时预览。",
-    "icon": "fas fa-markdown",
+    "icon": "fab fa-markdown",
     "iconColor": "#06d6a0",
-    "link": "https://doocs.github.io/md/",
+    "link": "/markdown",
     "tags": ["文本", "编辑", "写作"],
     "category": "text"
   },
@@ -75,7 +75,7 @@
     "description": "长度、重量、温度、速度等多种单位之间的快速转换工具。",
     "icon": "fas fa-ruler-combined",
     "iconColor": "#7209b7",
-    "link": "https://jsq.luomashu.com/unit-converter.html#",
+    "link": "/unit-convert",
     "tags": ["工具", "转换", "计算"],
     "category": "productivity"
   },
@@ -85,7 +85,7 @@
     "description": "在线图片压缩工具，减小图片文件大小，保持视觉质量基本不变。",
     "icon": "fas fa-compress-alt",
     "iconColor": "#f72585",
-    "link": "https://tinypng.com/",
+    "link": "/image-compress",
     "tags": ["图片", "优化", "工具"],
     "category": "design"
   },
@@ -95,7 +95,7 @@
     "description": "比较两个文本之间的差异，高亮显示增加、删除和修改的内容。",
     "icon": "fas fa-file-alt",
     "iconColor": "#0077b6",
-    "link": "https://diff.xuecan.net/",
+    "link": "/text-diff",
     "tags": ["文本", "比较", "工具"],
     "category": "text"
   },
@@ -115,7 +115,7 @@
     "description": "在线正则表达式测试工具，实时匹配高亮，支持常用正则表达式示例。",
     "icon": "fas fa-terminal",
     "iconColor": "#e76f51",
-    "link": "https://www.jyshare.com/front-end/854/",
+    "link": "/regex",
     "tags": ["开发", "测试", "正则"],
     "category": "development"
   }

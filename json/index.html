@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON格式化 - Tekio工具集</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../components/shared-styles.css">
+    <script src="../components/load-components.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        main { padding: 40px 0; }
+        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
+        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
+        .card {
+            background: white; border-radius: var(--border-radius); padding: 28px;
+            box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        }
+
+        /* 工具栏 */
+        .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 500; transition: var(--transition);
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--secondary-color); }
+        .btn-outline { background: white; border: 1px solid #ddd; color: #555; }
+        .btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .indent-select {
+            padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .indent-select:focus { outline: none; border-color: var(--primary-color); }
+
+        /* 编辑区 */
+        .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .editor-panel { display: flex; flex-direction: column; }
+        .editor-label { font-weight: 600; color: var(--dark-color); margin-bottom: 8px; font-size: 0.9rem; }
+        .json-input, .json-output {
+            width: 100%; min-height: 400px; padding: 14px; border: 1px solid #e9ecef;
+            border-radius: var(--border-radius); font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.88rem; resize: vertical; line-height: 1.6;
+        }
+        .json-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.1); }
+        .json-output { background: #1e1e2e; color: #cdd6f4; overflow: auto; white-space: pre-wrap; word-break: break-all; }
+
+        /* 语法高亮 */
+        .json-key { color: #89b4fa; }
+        .json-string { color: #a6e3a1; }
+        .json-number { color: #fab387; }
+        .json-boolean { color: #cba6f7; }
+        .json-null { color: #6c7086; font-style: italic; }
+
+        /* 树形视图 */
+        .tree-toggle { cursor: pointer; user-select: none; }
+        .tree-toggle:hover { opacity: 0.8; }
+        .tree-content { padding-left: 20px; }
+        .tree-collapsed .tree-content { display: none; }
+        .tree-key { color: #89b4fa; }
+        .tree-bracket { color: #6c7086; }
+        .tree-string { color: #a6e3a1; }
+        .tree-number { color: #fab387; }
+        .tree-boolean { color: #cba6f7; }
+        .tree-null { color: #6c7086; }
+        .tree-count { color: #6c7086; font-size: 0.85em; margin-left: 4px; }
+
+        /* 状态栏 */
+        .status-bar {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 0;
+            margin-top: 12px; border-top: 1px solid #f0f0f0; font-size: 0.85rem;
+        }
+        .status-valid { color: #22c55e; }
+        .status-invalid { color: #ef4444; }
+        .status-info { color: var(--gray-color); }
+
+        /* 视图切换 */
+        .view-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+        .view-tab {
+            padding: 6px 14px; border: 1px solid #e9ecef; border-radius: 6px; cursor: pointer;
+            font-size: 0.8rem; font-weight: 500; background: white; transition: var(--transition);
+        }
+        .view-tab.active { border-color: var(--primary-color); background: rgba(67,97,238,0.05); color: var(--primary-color); }
+
+        @media (max-width: 768px) {
+            .editor-grid { grid-template-columns: 1fr; }
+            .json-input, .json-output { min-height: 250px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+    <main class="container">
+        <h1 class="page-title"><i class="fas fa-code" style="color:#ff9e00;"></i> JSON格式化</h1>
+        <p class="page-subtitle">格式化、验证、压缩 JSON 数据</p>
+
+        <div class="card">
+            <div class="toolbar">
+                <button class="btn btn-primary" id="formatBtn"><i class="fas fa-magic"></i> 格式化</button>
+                <button class="btn btn-outline" id="minifyBtn"><i class="fas fa-compress"></i> 压缩</button>
+                <select class="indent-select" id="indentSelect">
+                    <option value="2">缩进: 2空格</option>
+                    <option value="4">缩进: 4空格</option>
+                    <option value="tab">缩进: Tab</option>
+                </select>
+                <button class="btn btn-outline" id="sampleBtn"><i class="fas fa-file-code"></i> 示例</button>
+                <button class="btn btn-outline" id="copyBtn"><i class="fas fa-copy"></i> 复制结果</button>
+                <button class="btn btn-outline" id="clearBtn"><i class="fas fa-trash"></i> 清空</button>
+            </div>
+
+            <div class="editor-grid">
+                <div class="editor-panel">
+                    <div class="editor-label">输入 JSON</div>
+                    <textarea class="json-input" id="jsonInput" placeholder="在此粘贴 JSON 数据..." spellcheck="false"></textarea>
+                </div>
+                <div class="editor-panel">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="editor-label">输出结果</div>
+                        <div class="view-tabs">
+                            <div class="view-tab active" data-view="code">代码</div>
+                            <div class="view-tab" data-view="tree">树形</div>
+                        </div>
+                    </div>
+                    <div class="json-output" id="jsonOutput"><span style="color:#6c7086;">格式化结果将显示在这里</span></div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <span id="statusText" class="status-info">等待输入...</span>
+                <span id="sizeInfo" class="status-info"></span>
+            </div>
+        </div>
+    </main>
+    <div id="footer-container"></div>
+
+    <script>
+        let currentView = 'code';
+        let lastFormatted = '';
+
+        const sampleJson = {
+            "name": "Tekio工具集",
+            "version": "1.0.0",
+            "description": "现代化在线开发者工具集合",
+            "tools": [
+                { "id": 1, "name": "时间戳转换", "category": "time", "active": true },
+                { "id": 2, "name": "JSON格式化", "category": "development", "active": true }
+            ],
+            "author": { "name": "xiaoqi", "email": "admin@tekio.cn" },
+            "config": { "theme": "light", "language": "zh-CN", "maxTools": 50 },
+            "tags": ["工具", "开发", "效率", "在线"],
+            "stats": null
+        };
+
+        function getIndent() {
+            const v = document.getElementById('indentSelect').value;
+            return v === 'tab' ? '\t' : parseInt(v);
+        }
+
+        function syntaxHighlight(json) {
+            return json.replace(/("(\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    cls = /:$/.test(match) ? 'json-key' : 'json-string';
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return `<span class="${cls}">${match}</span>`;
+            });
+        }
+
+        function buildTree(data, key, isLast) {
+            const comma = isLast ? '' : '<span class="tree-bracket">,</span>';
+            if (data === null) return `<span class="tree-key">"${escapeHtml(key)}"</span>: <span class="tree-null">null</span>${comma}`;
+            if (typeof data === 'boolean') return `<span class="tree-key">"${escapeHtml(key)}"</span>: <span class="tree-boolean">${data}</span>${comma}`;
+            if (typeof data === 'number') return `<span class="tree-key">"${escapeHtml(key)}"</span>: <span class="tree-number">${data}</span>${comma}`;
+            if (typeof data === 'string') return `<span class="tree-key">"${escapeHtml(key)}"</span>: <span class="tree-string">"${escapeHtml(data)}"</span>${comma}`;
+
+            const isArray = Array.isArray(data);
+            const entries = isArray ? data.map((v, i) => [i, v]) : Object.entries(data);
+            const open = isArray ? '<span class="tree-bracket">[</span>' : '<span class="tree-bracket">{</span>';
+            const close = isArray ? '<span class="tree-bracket">]</span>' : '<span class="tree-bracket">}</span>';
+            const count = `<span class="tree-count">// ${entries.length} ${isArray ? 'items' : 'keys'}</span>`;
+
+            let html = `<div class="tree-toggle" onclick="this.classList.toggle('tree-collapsed')">`;
+            html += `<span class="tree-key">"${escapeHtml(key)}"</span>: ${open}${count}${close}${comma}`;
+            html += `<div class="tree-content">`;
+            entries.forEach(([k, v], i) => {
+                html += `<div>${buildTree(v, k, i === entries.length - 1)}</div>`;
+            });
+            html += `</div></div>`;
+            return html;
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function format() {
+            const input = document.getElementById('jsonInput').value.trim();
+            const statusEl = document.getElementById('statusText');
+            const sizeEl = document.getElementById('sizeInfo');
+            const outputEl = document.getElementById('jsonOutput');
+
+            if (!input) {
+                statusEl.textContent = '等待输入...'; statusEl.className = 'status-info';
+                sizeEl.textContent = ''; outputEl.innerHTML = '<span style="color:#6c7086;">格式化结果将显示在这里</span>';
+                lastFormatted = ''; return;
+            }
+
+            try {
+                const obj = JSON.parse(input);
+                const indent = getIndent();
+                const formatted = JSON.stringify(obj, null, indent);
+                lastFormatted = formatted;
+                sizeEl.textContent = `${formatted.length} 字符`;
+
+                if (currentView === 'tree') {
+                    renderTree(obj);
+                } else {
+                    outputEl.innerHTML = syntaxHighlight(formatted);
+                }
+
+                const type = Array.isArray(obj) ? 'Array' : typeof obj;
+                const len = Array.isArray(obj) ? obj.length : (typeof obj === 'object' ? Object.keys(obj).length : '');
+                statusEl.textContent = `有效 JSON (${type}${len !== '' ? ', ' + len + ' 项' : ''})`;
+                statusEl.className = 'status-valid';
+            } catch(e) {
+                const msg = e.message;
+                const match = msg.match(/position\s+(\d+)/i);
+                let detail = msg;
+                if (match) {
+                    const pos = parseInt(match[1]);
+                    const line = input.substring(0, pos).split('\n').length;
+                    detail = `${msg} (第 ${line} 行)`;
+                }
+                statusEl.textContent = '无效 JSON: ' + detail;
+                statusEl.className = 'status-invalid';
+                sizeEl.textContent = '';
+                outputEl.innerHTML = `<span style="color:#ef4444;">${escapeHtml(msg)}</span>`;
+                lastFormatted = '';
+            }
+        }
+
+        function renderTree(obj) {
+            const outputEl = document.getElementById('jsonOutput');
+            outputEl.innerHTML = '<div style="font-size:0.88rem;line-height:1.8;padding:8px;">' + buildTree(obj, 'root', true) + '</div>';
+        }
+
+        function copyText(text) {
+            const btn = document.getElementById('copyBtn');
+            if (!text) return;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                    setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> 复制结果'; }, 1500);
+                }).catch(() => {});
+            }
+        }
+
+        document.getElementById('formatBtn').addEventListener('click', format);
+        document.getElementById('minifyBtn').addEventListener('click', () => {
+            const input = document.getElementById('jsonInput').value.trim();
+            try {
+                const obj = JSON.parse(input);
+                const minified = JSON.stringify(obj);
+                document.getElementById('jsonOutput').innerHTML = syntaxHighlight(minified);
+                lastFormatted = minified;
+                document.getElementById('sizeInfo').textContent = `${minified.length} 字符`;
+                document.getElementById('statusText').textContent = '压缩成功';
+                document.getElementById('statusText').className = 'status-valid';
+            } catch(e) {
+                document.getElementById('statusText').textContent = '无效 JSON: ' + e.message;
+                document.getElementById('statusText').className = 'status-invalid';
+            }
+        });
+        document.getElementById('sampleBtn').addEventListener('click', () => {
+            document.getElementById('jsonInput').value = JSON.stringify(sampleJson, null, 2);
+            format();
+        });
+        document.getElementById('copyBtn').addEventListener('click', () => copyText(lastFormatted));
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('jsonInput').value = '';
+            document.getElementById('jsonOutput').innerHTML = '<span style="color:#6c7086;">格式化结果将显示在这里</span>';
+            document.getElementById('statusText').textContent = '等待输入...';
+            document.getElementById('statusText').className = 'status-info';
+            document.getElementById('sizeInfo').textContent = '';
+            lastFormatted = '';
+        });
+        document.getElementById('indentSelect').addEventListener('change', format);
+
+        // View tabs
+        document.querySelectorAll('.view-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentView = this.dataset.view;
+                if (lastFormatted) {
+                    const input = document.getElementById('jsonInput').value.trim();
+                    try {
+                        const obj = JSON.parse(input);
+                        if (currentView === 'tree') renderTree(obj);
+                        else document.getElementById('jsonOutput').innerHTML = syntaxHighlight(lastFormatted);
+                    } catch(e) {}
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof ComponentLoader !== 'undefined') {
+                ComponentLoader.initPage({ loadHeader: true, loadFooter: true, headerTarget: 'header-container', footerTarget: 'footer-container', activeNav: 'tools', basePath: '../components/', toolName: 'JSON格式化' });
+            }
+            // Load sample
+            document.getElementById('jsonInput').value = JSON.stringify(sampleJson, null, 2);
+            format();
+        });
+    </script>
+</body>
+</html>

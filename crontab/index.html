@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crontab查询器 - Tekio工具集</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../components/shared-styles.css">
+    <script src="../components/load-components.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        main { padding: 40px 0; }
+        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
+        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
+        .card {
+            background: white; border-radius: var(--border-radius); padding: 28px;
+            box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        }
+        .card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
+
+        /* 表达式显示 */
+        .expr-display {
+            background: #1e1e2e; color: #cdd6f4; padding: 18px 24px; border-radius: var(--border-radius);
+            font-family: 'Consolas', monospace; font-size: 1.6rem; text-align: center;
+            letter-spacing: 4px; margin-bottom: 8px; position: relative;
+        }
+        .expr-display .field-sep { color: #6c7086; }
+        .expr-display .field-min { color: #89b4fa; }
+        .expr-display .field-hour { color: #a6e3a1; }
+        .expr-display .field-day { color: #fab387; }
+        .expr-display .field-month { color: #cba6f7; }
+        .expr-display .field-week { color: #f38ba8; }
+        .expr-copy {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.1); border: none; color: #cdd6f4; padding: 6px 10px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+        }
+        .expr-copy:hover { background: rgba(255,255,255,0.2); }
+        .expr-desc {
+            text-align: center; font-size: 1.05rem; color: var(--dark-color); font-weight: 500;
+            padding: 12px; background: rgba(67,97,238,0.05); border-radius: var(--border-radius);
+        }
+
+        /* 字段编辑 */
+        .field-row {
+            display: grid; grid-template-columns: 70px 1fr; gap: 12px; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid #f0f0f0;
+        }
+        .field-row:last-child { border-bottom: none; }
+        .field-label { font-weight: 600; color: var(--dark-color); font-size: 0.9rem; }
+        .field-hint { font-size: 0.75rem; color: var(--gray-color); }
+        .field-input {
+            padding: 8px 12px; border: 1px solid #e9ecef; border-radius: 8px;
+            font-family: 'Consolas', monospace; font-size: 0.95rem;
+        }
+        .field-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.1); }
+
+        /* 预设 */
+        .presets-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+        .preset-chip {
+            padding: 8px 14px; border: 1px solid #e9ecef; border-radius: 50px; cursor: pointer;
+            font-size: 0.8rem; background: white; transition: var(--transition);
+        }
+        .preset-chip:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(67,97,238,0.03); }
+        .preset-chip code { font-family: 'Consolas', monospace; font-size: 0.75rem; color: var(--gray-color); margin-left: 4px; }
+
+        /* 执行时间 */
+        .next-times { list-style: none; }
+        .next-times li {
+            padding: 10px 14px; background: #f8f9fa; border-radius: 8px; margin-bottom: 6px;
+            display: flex; align-items: center; gap: 10px; font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        .next-times li i { color: var(--primary-color); }
+
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 500; transition: var(--transition);
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--secondary-color); }
+        .btn-outline { background: white; border: 1px solid #ddd; color: #555; }
+        .btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+        .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 8px; }
+
+        @media (max-width: 768px) {
+            .field-row { grid-template-columns: 60px 1fr; }
+            .expr-display { font-size: 1.2rem; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+    <main class="container">
+        <h1 class="page-title"><i class="fas fa-clock" style="color:#4895ef;"></i> Crontab查询器</h1>
+        <p class="page-subtitle">Cron 定时表达式编辑器，可视化生成与解析</p>
+
+        <div class="card">
+            <div class="expr-display" id="exprDisplay">
+                * * * * *
+                <button class="expr-copy" id="copyBtn" title="复制表达式"><i class="fas fa-copy"></i></button>
+            </div>
+            <div class="expr-desc" id="exprDesc">每分钟执行一次</div>
+            <div id="errorMsg" class="error-msg"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">表达式编辑</div>
+            <div class="field-row">
+                <div><div class="field-label">分钟</div><div class="field-hint">0-59</div></div>
+                <input type="text" class="field-input" id="fieldMin" value="*" placeholder="* 或 */5 或 0,30">
+            </div>
+            <div class="field-row">
+                <div><div class="field-label">小时</div><div class="field-hint">0-23</div></div>
+                <input type="text" class="field-input" id="fieldHour" value="*" placeholder="* 或 9-17 或 8,12,18">
+            </div>
+            <div class="field-row">
+                <div><div class="field-label">日</div><div class="field-hint">1-31</div></div>
+                <input type="text" class="field-input" id="fieldDay" value="*" placeholder="* 或 1,15 或 */2">
+            </div>
+            <div class="field-row">
+                <div><div class="field-label">月</div><div class="field-hint">1-12</div></div>
+                <input type="text" class="field-input" id="fieldMonth" value="*" placeholder="* 或 1,6,12">
+            </div>
+            <div class="field-row">
+                <div><div class="field-label">星期</div><div class="field-hint">0-6</div></div>
+                <input type="text" class="field-input" id="fieldWeek" value="*" placeholder="* 或 1-5 或 0,6">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">常用预设</div>
+            <div class="presets-grid" id="presetsGrid"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">下次执行时间</div>
+            <ul class="next-times" id="nextTimes"></ul>
+        </div>
+    </main>
+    <div id="footer-container"></div>
+
+    <script>
+        const presets = [
+            { label: '每分钟', expr: '* * * * *' },
+            { label: '每5分钟', expr: '*/5 * * * *' },
+            { label: '每小时', expr: '0 * * * *' },
+            { label: '每天凌晨', expr: '0 0 * * *' },
+            { label: '每天中午', expr: '0 12 * * *' },
+            { label: '工作日9点', expr: '0 9 * * 1-5' },
+            { label: '每周一', expr: '0 0 * * 1' },
+            { label: '每月1号', expr: '0 0 1 * *' },
+            { label: '每年1月1日', expr: '0 0 1 1 *' },
+            { label: '工作日9-17点', expr: '0 9-17 * * 1-5' },
+        ];
+
+        const presetsGrid = document.getElementById('presetsGrid');
+        presets.forEach(p => {
+            const chip = document.createElement('div');
+            chip.className = 'preset-chip';
+            chip.innerHTML = `${p.label} <code>${p.expr}</code>`;
+            chip.addEventListener('click', () => setExpr(p.expr));
+            presetsGrid.appendChild(chip);
+        });
+
+        function setExpr(expr) {
+            const parts = expr.split(/\s+/);
+            if (parts.length !== 5) return;
+            document.getElementById('fieldMin').value = parts[0];
+            document.getElementById('fieldHour').value = parts[1];
+            document.getElementById('fieldDay').value = parts[2];
+            document.getElementById('fieldMonth').value = parts[3];
+            document.getElementById('fieldWeek').value = parts[4];
+            update();
+        }
+
+        function getExpr() {
+            return ['fieldMin','fieldHour','fieldDay','fieldMonth','fieldWeek']
+                .map(id => document.getElementById(id).value.trim()).join(' ');
+        }
+
+        function parseField(field, min, max) {
+            const values = new Set();
+            field.split(',').forEach(part => {
+                part = part.trim();
+                if (part === '*') { for (let i = min; i <= max; i++) values.add(i); }
+                else if (part.includes('/')) {
+                    const [base, step] = part.split('/');
+                    const s = parseInt(step);
+                    let start = base === '*' ? min : parseInt(base);
+                    for (let i = start; i <= max; i += s) values.add(i);
+                } else if (part.includes('-')) {
+                    const [a, b] = part.split('-').map(Number);
+                    for (let i = a; i <= b; i++) values.add(i);
+                } else {
+                    const n = parseInt(part);
+                    if (!isNaN(n) && n >= min && n <= max) values.add(n);
+                }
+            });
+            return values;
+        }
+
+        function describeCron(expr) {
+            const parts = expr.split(/\s+/);
+            const [min, hour, day, month, week] = parts;
+            let desc = '';
+
+            if (min === '*' && hour === '*' && day === '*' && month === '*' && week === '*') return '每分钟执行一次';
+
+            const monthNames = ['','一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+            const weekNames = ['周日','周一','周二','周三','周四','周五','周六'];
+
+            if (month !== '*') desc += monthNames[parseInt(month)] || `第${month}月`;
+            if (week !== '*') desc += (desc ? ' ' : '') + weekNames[parseInt(week)] || `星期${week}`;
+
+            if (hour !== '*' && min !== '*') {
+                if (hour.includes('-')) desc += (desc ? ' ' : '') + `${hour}时${min}分`;
+                else desc += (desc ? ' ' : '') + `${hour}:${min.padStart(2,'0')}`;
+            } else if (hour !== '*') {
+                desc += (desc ? ' ' : '') + `${hour}时的`;
+                if (min === '*') desc += '每分钟';
+                else desc += `${min}分`;
+            } else if (min !== '*') {
+                desc += (desc ? ' ' : '') + `每小时的第${min}分钟`;
+            }
+
+            if (day !== '*') desc += (desc ? ' ' : '') + `每月${day}日`;
+
+            if (!desc) desc = '每分钟执行一次';
+            return desc + '执行';
+        }
+
+        function getNextTimes(expr, count = 5) {
+            const parts = expr.split(/\s+/);
+            try {
+                const mins = parseField(parts[0], 0, 59);
+                const hours = parseField(parts[1], 0, 23);
+                const days = parseField(parts[2], 1, 31);
+                const months = parseField(parts[3], 1, 12);
+                const weeks = parseField(parts[4], 0, 6);
+
+                if (mins.size === 0 || hours.size === 0 || days.size === 0 || months.size === 0) return [];
+
+                const results = [];
+                const now = new Date();
+                let d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, 0, 0);
+                const maxIter = 525600; // 1 year of minutes
+                let iter = 0;
+
+                while (results.length < count && iter < maxIter) {
+                    iter++;
+                    const m = d.getMinutes(), h = d.getHours(), day = d.getDate(), mon = d.getMonth() + 1, w = d.getDay();
+                    if (mins.has(m) && hours.has(h) && days.has(day) && months.has(mon) && weeks.has(w)) {
+                        results.push(new Date(d));
+                    }
+                    d.setMinutes(d.getMinutes() + 1);
+                }
+                return results;
+            } catch(e) { return []; }
+        }
+
+        function update() {
+            const expr = getExpr();
+            const parts = expr.split(/\s+/);
+            const errEl = document.getElementById('errorMsg');
+            errEl.textContent = '';
+
+            if (parts.length !== 5 || parts.some(p => !p)) {
+                errEl.textContent = '表达式不完整，需要5个字段（分 时 日 月 星期）';
+                return;
+            }
+
+            // Validate fields
+            const ranges = [[0,59],[0,23],[1,31],[1,12],[0,6]];
+            let valid = true;
+            parts.forEach((p, i) => {
+                if (p !== '*') {
+                    p.split(',').forEach(seg => {
+                        seg = seg.trim();
+                        if (seg.includes('/')) {
+                            const parts2 = seg.split('/');
+                            if (parts2.length !== 2) valid = false;
+                        } else if (seg.includes('-')) {
+                            const [a, b] = seg.split('-').map(Number);
+                            if (isNaN(a) || isNaN(b) || a < ranges[i][0] || b > ranges[i][1]) valid = false;
+                        } else if (seg !== '*' && (isNaN(parseInt(seg)) || parseInt(seg) < ranges[i][0] || parseInt(seg) > ranges[i][1])) {
+                            valid = false;
+                        }
+                    });
+                }
+            });
+
+            if (!valid) {
+                errEl.textContent = '表达式字段值无效';
+                return;
+            }
+
+            // Update display
+            const display = document.getElementById('exprDisplay');
+            const copyBtn = document.getElementById('copyBtn');
+            display.innerHTML = `<span class="field-min">${parts[0]}</span><span class="field-sep"> </span><span class="field-hour">${parts[1]}</span><span class="field-sep"> </span><span class="field-day">${parts[2]}</span><span class="field-sep"> </span><span class="field-month">${parts[3]}</span><span class="field-sep"> </span><span class="field-week">${parts[4]}</span>` + copyBtn.outerHTML;
+            display.querySelector('.expr-copy').addEventListener('click', () => {
+                if (navigator.clipboard) navigator.clipboard.writeText(expr);
+            });
+
+            // Description
+            document.getElementById('exprDesc').textContent = describeCron(expr);
+
+            // Next times
+            const times = getNextTimes(expr);
+            const list = document.getElementById('nextTimes');
+            if (times.length === 0) {
+                list.innerHTML = '<li style="color:var(--gray-color);">无法计算下次执行时间</li>';
+            } else {
+                list.innerHTML = times.map(t => {
+                    const fmt = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+                    const diff = t - new Date();
+                    const diffMin = Math.round(diff / 60000);
+                    const diffText = diffMin < 60 ? `${diffMin}分钟后` : `${Math.round(diffMin/60)}小时${diffMin%60}分钟后`;
+                    return `<li><i class="far fa-clock"></i> ${fmt} <span style="color:var(--gray-color);font-size:0.8rem;margin-left:auto;">(${diffText})</span></li>`;
+                }).join('');
+            }
+        }
+
+        ['fieldMin','fieldHour','fieldDay','fieldMonth','fieldWeek'].forEach(id => {
+            document.getElementById(id).addEventListener('input', update);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof ComponentLoader !== 'undefined') {
+                ComponentLoader.initPage({ loadHeader: true, loadFooter: true, headerTarget: 'header-container', footerTarget: 'footer-container', activeNav: 'tools', basePath: '../components/', toolName: 'Crontab查询器' });
+            }
+            update();
+        });
+    </script>
+</body>
+</html>

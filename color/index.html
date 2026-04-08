@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>颜色选择器 - Tekio工具集</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../components/shared-styles.css">
+    <script src="../components/load-components.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        main { padding: 40px 0; }
+        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
+        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
+        .card {
+            background: white; border-radius: var(--border-radius); padding: 28px;
+            box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+        }
+        .card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
+
+        /* 颜色选择区 */
+        .picker-area { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+        .color-preview-wrap { position: relative; flex-shrink: 0; }
+        .color-preview {
+            width: 160px; height: 160px; border-radius: 16px; border: 3px solid #e9ecef;
+            cursor: pointer; position: relative; overflow: hidden; transition: box-shadow 0.2s;
+        }
+        .color-preview:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .color-preview input[type="color"] {
+            position: absolute; inset: -10px; width: calc(100% + 20px); height: calc(100% + 20px);
+            cursor: pointer; border: none; padding: 0;
+        }
+        .picker-info { flex: 1; min-width: 200px; }
+        .hex-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .hex-input {
+            flex: 1; padding: 10px 14px; border: 2px solid #e9ecef; border-radius: var(--border-radius);
+            font-size: 1.1rem; font-family: 'Consolas', monospace; font-weight: 600;
+        }
+        .hex-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.1); }
+
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 500; transition: var(--transition);
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--secondary-color); }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+
+        /* 颜色格式 */
+        .format-row {
+            display: flex; align-items: center; justify-content: space-between; padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .format-row:last-child { border-bottom: none; }
+        .format-label { font-weight: 600; color: var(--dark-color); min-width: 50px; }
+        .format-value {
+            flex: 1; font-family: 'Consolas', monospace; color: #555; text-align: center;
+            font-size: 0.95rem;
+        }
+
+        /* 配色方案 */
+        .scheme-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .scheme-tab {
+            padding: 8px 16px; border: 2px solid #e9ecef; border-radius: 50px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 500; background: white; transition: var(--transition);
+        }
+        .scheme-tab.active { border-color: var(--primary-color); background: rgba(67,97,238,0.05); color: var(--primary-color); }
+        .scheme-tab:hover { border-color: var(--primary-light); }
+        .scheme-colors { display: flex; gap: 10px; flex-wrap: wrap; }
+        .scheme-swatch {
+            width: 72px; height: 72px; border-radius: 12px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; border: 2px solid rgba(0,0,0,0.05);
+            display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px;
+            font-size: 0.65rem; font-family: 'Consolas', monospace; color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+        .scheme-swatch:hover { transform: scale(1.08); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+
+        /* 对比度检查 */
+        .contrast-row { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .contrast-preview {
+            width: 100px; height: 100px; border-radius: 12px; display: flex;
+            align-items: center; justify-content: center; font-weight: 600; font-size: 1rem;
+            border: 2px solid #e9ecef;
+        }
+        .contrast-result { font-size: 1.2rem; font-weight: 600; }
+        .contrast-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 0.8rem;
+            font-weight: 500; margin-top: 4px;
+        }
+        .contrast-pass { background: #dcfce7; color: #166534; }
+        .contrast-fail { background: #fef2f2; color: #991b1b; }
+
+        @media (max-width: 768px) {
+            .picker-area { flex-direction: column; align-items: center; }
+            .color-preview { width: 140px; height: 140px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+    <main class="container">
+        <h1 class="page-title"><i class="fas fa-palette" style="color:#ff6b6b;"></i> 颜色选择器</h1>
+        <p class="page-subtitle">选择颜色、转换格式、生成配色方案</p>
+
+        <div class="card">
+            <div class="picker-area">
+                <div class="color-preview-wrap">
+                    <div class="color-preview" id="colorPreview" style="background:#4361ee;">
+                        <input type="color" id="colorPicker" value="#4361ee">
+                    </div>
+                </div>
+                <div class="picker-info">
+                    <div class="hex-input-row">
+                        <input type="text" class="hex-input" id="hexInput" value="#4361EE" maxlength="7" placeholder="#RRGGBB">
+                        <button class="btn btn-primary btn-sm" onclick="copyText(document.getElementById('hexInput').value)"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <div class="format-row">
+                        <span class="format-label">RGB</span>
+                        <span class="format-value" id="rgbValue">rgb(67, 97, 238)</span>
+                        <button class="btn btn-primary btn-sm" onclick="copyText(document.getElementById('rgbValue').textContent)"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <div class="format-row">
+                        <span class="format-label">HSL</span>
+                        <span class="format-value" id="hslValue">hsl(229, 84%, 60%)</span>
+                        <button class="btn btn-primary btn-sm" onclick="copyText(document.getElementById('hslValue').textContent)"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">配色方案</div>
+            <div class="scheme-tabs">
+                <div class="scheme-tab active" data-scheme="complementary">互补色</div>
+                <div class="scheme-tab" data-scheme="analogous">类似色</div>
+                <div class="scheme-tab" data-scheme="triadic">三色</div>
+                <div class="scheme-tab" data-scheme="split">分裂互补</div>
+                <div class="scheme-tab" data-scheme="tetradic">四色</div>
+            </div>
+            <div class="scheme-colors" id="schemeColors"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">对比度检查</div>
+            <div class="contrast-row">
+                <div>
+                    <label style="font-size:0.85rem;color:var(--gray-color);">前景色</label>
+                    <input type="color" id="fgColor" value="#ffffff" style="width:60px;height:36px;border:none;cursor:pointer;">
+                </div>
+                <div style="font-size:1.5rem;color:var(--gray-color);">对比</div>
+                <div>
+                    <label style="font-size:0.85rem;color:var(--gray-color);">背景色（当前选中）</label>
+                    <div style="width:60px;height:36px;border-radius:8px;border:1px solid #e9ecef;" id="bgColorBox"></div>
+                </div>
+                <div>
+                    <div class="contrast-result" id="contrastRatio">-</div>
+                    <div class="contrast-badge" id="contrastBadge"></div>
+                </div>
+                <div class="contrast-preview" id="contrastPreview">
+                    示例文本
+                </div>
+            </div>
+        </div>
+    </main>
+    <div id="footer-container"></div>
+
+    <script>
+        let currentHex = '#4361ee';
+
+        function hexToRgb(hex) {
+            hex = hex.replace('#', '');
+            if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+            return { r: parseInt(hex.substring(0,2),16), g: parseInt(hex.substring(2,4),16), b: parseInt(hex.substring(4,6),16) };
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r,g,b), min = Math.min(r,g,b);
+            let h, s, l = (max + min) / 2;
+            if (max === min) { h = s = 0; }
+            else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch(max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+        }
+
+        function hslToHex(h, s, l) {
+            s /= 100; l /= 100;
+            const a = s * Math.min(l, 1 - l);
+            const f = n => { const k = (n + h / 30) % 12; return l - a * Math.max(Math.min(k-3, 9-k, 1), -1); };
+            return '#' + [f(0), f(8), f(4)].map(x => Math.round(x * 255).toString(16).padStart(2,'0')).join('');
+        }
+
+        function updateColor(hex) {
+            hex = hex.toUpperCase();
+            if (!/^#[0-9A-F]{6}$/.test(hex)) return;
+            currentHex = hex;
+            document.getElementById('colorPicker').value = hex.toLowerCase();
+            document.getElementById('colorPreview').style.background = hex;
+            document.getElementById('hexInput').value = hex;
+            const rgb = hexToRgb(hex);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+            document.getElementById('rgbValue').textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            document.getElementById('hslValue').textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            updateSchemes(hsl.h, hsl.s, hsl.l);
+            updateContrast();
+        }
+
+        function getScheme(type, h, s, l) {
+            switch(type) {
+                case 'complementary': return [[h,s,l],[h+180,s,l]];
+                case 'analogous': return [[h-30,s,l],[h,s,l],[h+30,s,l]];
+                case 'triadic': return [[h,s,l],[h+120,s,l],[h+240,s,l]];
+                case 'split': return [[h,s,l],[h+150,s,l],[h+210,s,l]];
+                case 'tetradic': return [[h,s,l],[h+90,s,l],[h+180,s,l],[h+270,s,l]];
+            }
+        }
+
+        let currentScheme = 'complementary';
+        function updateSchemes(h, s, l) {
+            const colors = getScheme(currentScheme, h, s, l);
+            const container = document.getElementById('schemeColors');
+            container.innerHTML = colors.map(([ch,cs,cl]) => {
+                const hex = hslToHex((ch + 360) % 360, cs, cl).toUpperCase();
+                return `<div class="scheme-swatch" style="background:${hex}" onclick="updateColor('${hex}')" title="点击选择 ${hex}">${hex}</div>`;
+            }).join('');
+        }
+
+        function updateContrast() {
+            const fg = document.getElementById('fgColor').value;
+            const ratio = contrastRatio(fg, currentHex);
+            document.getElementById('contrastRatio').textContent = ratio.toFixed(2) + ':1';
+            const badge = document.getElementById('contrastBadge');
+            const preview = document.getElementById('contrastPreview');
+            preview.style.background = currentHex;
+            preview.style.color = fg;
+            document.getElementById('bgColorBox').style.background = currentHex;
+            if (ratio >= 7) { badge.textContent = 'AAA 优秀'; badge.className = 'contrast-badge contrast-pass'; }
+            else if (ratio >= 4.5) { badge.textContent = 'AA 良好'; badge.className = 'contrast-badge contrast-pass'; }
+            else { badge.textContent = '不通过'; badge.className = 'contrast-badge contrast-fail'; }
+        }
+
+        function contrastRatio(hex1, hex2) {
+            const lum1 = relativeLuminance(hexToRgb(hex1));
+            const lum2 = relativeLuminance(hexToRgb(hex2));
+            const lighter = Math.max(lum1, lum2), darker = Math.min(lum1, lum2);
+            return (lighter + 0.05) / (darker + 0.05);
+        }
+
+        function relativeLuminance({r,g,b}) {
+            const [rs,gs,bs] = [r,g,b].map(c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+            return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+        }
+
+        function copyText(text) {
+            if (navigator.clipboard) navigator.clipboard.writeText(text).catch(() => {});
+        }
+
+        document.getElementById('colorPicker').addEventListener('input', e => updateColor(e.target.value));
+        document.getElementById('hexInput').addEventListener('input', function() {
+            let v = this.value.trim();
+            if (!v.startsWith('#')) v = '#' + v;
+            if (/^#[0-9A-Fa-f]{6}$/.test(v)) updateColor(v);
+        });
+        document.getElementById('fgColor').addEventListener('input', updateContrast);
+        document.querySelectorAll('.scheme-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.scheme-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentScheme = this.dataset.scheme;
+                const rgb = hexToRgb(currentHex);
+                const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+                updateSchemes(hsl.h, hsl.s, hsl.l);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof ComponentLoader !== 'undefined') {
+                ComponentLoader.initPage({ loadHeader: true, loadFooter: true, headerTarget: 'header-container', footerTarget: 'footer-container', activeNav: 'tools', basePath: '../components/', toolName: '颜色选择器' });
+            }
+            updateColor('#4361ee');
+        });
+    </script>
+</body>
+</html>
