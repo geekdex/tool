@@ -8,52 +8,53 @@
     <link rel="stylesheet" href="../components/shared-styles.css">
     <script src="../components/load-components.js"></script>
     <style>
-        .tool-card {
-            background: white; border-radius: var(--border-radius); padding: 28px;
-            box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
-        }
-        .tool-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-        }
-        .tool-card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
-
         /* 分类标签 */
-        .category-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+        .category-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
         .category-tab {
-            padding: 8px 18px; border: 2px solid #e9ecef; border-radius: 50px; cursor: pointer;
-            font-size: 0.9rem; font-weight: 500; background: white; transition: var(--transition);
+            padding: 9px 20px; border: 2px solid #eef0f4; border-radius: 50px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 600; background: white; transition: var(--transition); color: #555;
         }
-        .category-tab.active { border-color: var(--primary-color); background: rgba(67,97,238,0.05); color: var(--primary-color); }
-        .category-tab:hover { border-color: var(--primary-light); }
+        .category-tab.active {
+            border-color: var(--primary-color); background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white; box-shadow: 0 3px 12px rgba(67,97,238,0.25);
+        }
+        .category-tab:hover:not(.active) { border-color: var(--primary-light); color: var(--primary-color); transform: translateY(-1px); }
 
         /* 转换区 */
         .convert-row { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
-        .convert-group { flex: 1; min-width: 200px; }
-        .convert-group label { display: block; font-weight: 500; color: var(--dark-color); margin-bottom: 6px; font-size: 0.9rem; }
+        .convert-group { flex: 1; min-width: 180px; }
+        .convert-group label { display: block; font-weight: 600; color: var(--dark-color); margin-bottom: 8px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.3px; }
         .convert-group select, .convert-group input {
-            width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: var(--border-radius);
-            font-size: 1rem; transition: var(--transition);
+            width: 100%; padding: 12px 16px; border: 1.5px solid #e9ecef; border-radius: 12px;
+            font-size: 1rem; transition: var(--transition); background: #f8f9fb;
         }
         .convert-group select:focus, .convert-group input:focus {
-            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.1);
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08); background: white;
         }
         .swap-btn {
-            width: 48px; height: 48px; border-radius: 50%; border: 2px solid #e9ecef; background: white;
+            width: 50px; height: 50px; border-radius: 50%; border: 2px solid #eef0f4; background: white;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; color: var(--primary-color); transition: var(--transition); flex-shrink: 0;
+            font-size: 1.1rem; color: var(--primary-color); transition: var(--transition); flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .swap-btn:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .swap-btn:hover { background: var(--primary-color); color: white; border-color: var(--primary-color); box-shadow: 0 4px 14px rgba(67,97,238,0.3); transform: scale(1.1); }
 
-        .result-text { text-align: center; font-size: 1.3rem; font-weight: 600; color: var(--primary-color); margin-top: 20px; padding: 16px; background: rgba(67,97,238,0.05); border-radius: var(--border-radius); }
+        .result-text {
+            text-align: center; font-size: 1.2rem; font-weight: 700; color: var(--primary-color);
+            margin-top: 24px; padding: 18px; background: linear-gradient(135deg, rgba(67,97,238,0.04), rgba(72,149,239,0.06));
+            border-radius: 12px; border: 1px solid rgba(67,97,238,0.1); letter-spacing: 0.3px;
+        }
 
         /* 参考表 */
-        .ref-table { width: 100%; border-collapse: collapse; }
-        .ref-table th { background: var(--primary-color); color: white; padding: 12px 16px; text-align: left; font-weight: 500; font-size: 0.9rem; }
-        .ref-table td { padding: 10px 16px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
-        .ref-table tr:nth-child(even) { background: #f9f9f9; }
+        .ref-table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .ref-table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white; padding: 12px 18px; text-align: left; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.3px;
+        }
+        .ref-table td { padding: 11px 18px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
+        .ref-table tr:nth-child(even) { background: #f8f9fb; }
         .ref-table tr:hover { background: rgba(67,97,238,0.03); }
-        .ref-table .val { font-family: 'Consolas', monospace; color: var(--dark-color); font-weight: 500; }
+        .ref-table .val { font-family: 'Consolas', monospace; color: var(--dark-color); font-weight: 600; }
 
         @media (max-width: 992px) {
             .convert-row { flex-direction: column; }

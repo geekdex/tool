@@ -10,59 +10,71 @@
     <style>
 
         /* 正则输入 */
-        .regex-input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+        .regex-input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
         .regex-input {
-            flex: 1; min-width: 200px; padding: 12px 16px; border: 2px solid #e9ecef;
-            border-radius: var(--border-radius); font-family: 'Consolas', monospace; font-size: 1.1rem;
+            flex: 1; min-width: 200px; padding: 14px 18px; border: 2px solid #e9ecef;
+            border-radius: 12px; font-family: 'Consolas', 'Fira Code', monospace; font-size: 1.15rem;
+            font-weight: 600; letter-spacing: 1px; background: #f8f9fb; transition: var(--transition);
         }
-        .regex-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.1); }
-        .flags { display: flex; gap: 4px; }
+        .regex-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(67,97,238,0.08); background: white; }
+        .flags { display: flex; gap: 5px; }
         .flag-btn {
-            width: 36px; height: 36px; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer;
-            font-family: 'Consolas', monospace; font-size: 0.9rem; font-weight: 600; background: white;
-            transition: var(--transition); display: flex; align-items: center; justify-content: center;
+            width: 38px; height: 38px; border: 2px solid #e9ecef; border-radius: 10px; cursor: pointer;
+            font-family: 'Consolas', monospace; font-size: 0.9rem; font-weight: 700; background: white;
+            transition: var(--transition); display: flex; align-items: center; justify-content: center; color: #888;
         }
-        .flag-btn.active { border-color: var(--primary-color); background: rgba(67,97,238,0.1); color: var(--primary-color); }
-        .flag-btn:hover { border-color: var(--primary-light); }
+        .flag-btn.active {
+            border-color: var(--primary-color); background: linear-gradient(135deg, rgba(67,97,238,0.08), rgba(72,149,239,0.12));
+            color: var(--primary-color); box-shadow: 0 2px 8px rgba(67,97,238,0.15);
+        }
+        .flag-btn:hover:not(.active) { border-color: var(--primary-light); color: var(--primary-color); }
 
 
         /* 测试文本 */
         .test-textarea {
-            width: 100%; min-height: 120px; padding: 14px; border: 1px solid #e9ecef;
-            border-radius: var(--border-radius); font-family: 'Consolas', monospace; font-size: 0.95rem;
-            resize: vertical; line-height: 1.7;
+            width: 100%; min-height: 120px; padding: 16px; border: 1.5px solid #e9ecef;
+            border-radius: 10px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.92rem;
+            resize: vertical; line-height: 1.8; transition: var(--transition); background: #fdfdfe;
         }
-        .test-textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.1); }
+        .test-textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08); }
 
         /* 匹配高亮 */
         .match-result {
-            padding: 14px; min-height: 60px; background: #fafafa; border: 1px solid #e9ecef;
-            border-radius: var(--border-radius); font-family: 'Consolas', monospace; font-size: 0.95rem;
-            line-height: 1.7; white-space: pre-wrap; word-break: break-all;
+            padding: 16px; min-height: 64px; background: #fdfdfe; border: 1.5px solid #e9ecef;
+            border-radius: 10px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.92rem;
+            line-height: 1.8; white-space: pre-wrap; word-break: break-all;
         }
-        .match-highlight { background: rgba(67, 97, 238, 0.25); border-radius: 3px; padding: 1px 0; }
-        .match-group-1 { background: rgba(255, 159, 0, 0.25); }
-        .match-group-2 { background: rgba(34, 197, 94, 0.25); }
+        .match-highlight { background: rgba(67, 97, 238, 0.2); border-radius: 3px; padding: 1px 0; border-bottom: 2px solid var(--primary-color); }
+        .match-group-1 { background: rgba(255, 159, 0, 0.2); border-bottom-color: #ff9e00; }
+        .match-group-2 { background: rgba(34, 197, 94, 0.2); border-bottom-color: #22c55e; }
 
         /* 错误提示 */
-        .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 8px; }
+        .error-msg { color: #ef4444; font-size: 0.82rem; margin-top: 10px; font-weight: 500; }
 
         /* 匹配详情 */
-        .match-info { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
-        .match-count { font-weight: 600; color: var(--primary-color); }
-        .match-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-        .match-table th { background: var(--primary-color); color: white; padding: 8px 12px; text-align: left; font-size: 0.8rem; font-weight: 500; }
-        .match-table td { padding: 6px 12px; border-bottom: 1px solid #f0f0f0; font-family: 'Consolas', monospace; font-size: 0.85rem; }
-        .match-table tr:nth-child(even) { background: #f9f9f9; }
-        .match-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; background: rgba(67,97,238,0.1); color: var(--primary-color); }
+        .match-info { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+        .match-count { font-weight: 700; color: var(--primary-color); font-size: 0.95rem; }
+        .match-count.has-matches { color: #22c55e; }
+        .match-table { width: 100%; border-collapse: collapse; margin-top: 14px; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .match-table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white; padding: 10px 14px; text-align: left; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.3px;
+        }
+        .match-table td { padding: 8px 14px; border-bottom: 1px solid #f3f4f6; font-family: 'Consolas', monospace; font-size: 0.82rem; }
+        .match-table tr:nth-child(even) { background: #f8f9fb; }
+        .match-table tr:hover { background: rgba(67,97,238,0.03); }
+        .match-badge {
+            display: inline-block; padding: 2px 10px; border-radius: 6px; font-size: 0.72rem;
+            background: rgba(67,97,238,0.08); color: var(--primary-color); font-weight: 600; margin-right: 4px;
+        }
 
         /* 示例 */
         .examples-grid { display: flex; gap: 8px; flex-wrap: wrap; }
         .example-chip {
-            padding: 6px 14px; border: 1px solid #e9ecef; border-radius: 50px; cursor: pointer;
-            font-size: 0.8rem; background: white; transition: var(--transition);
+            padding: 7px 16px; border: 1.5px solid #eef0f4; border-radius: 50px; cursor: pointer;
+            font-size: 0.78rem; background: white; transition: var(--transition); color: #666; font-weight: 500;
         }
-        .example-chip:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(67,97,238,0.03); }
+        .example-chip:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(67,97,238,0.03); transform: translateY(-1px); }
 
         @media (max-width: 768px) {
             .regex-input-row { flex-direction: column; }
@@ -157,10 +169,12 @@
 
             if (matches.length === 0) {
                 countEl.textContent = '匹配 0 个结果';
+                countEl.className = 'match-count';
                 return;
             }
 
             countEl.textContent = `匹配 ${matches.length} 个结果`;
+            countEl.className = 'match-count has-matches';
             tableEl.style.display = 'table';
 
             // Build highlighted text (reverse order to preserve indices)

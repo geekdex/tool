@@ -9,74 +9,68 @@
     <script src="https://cdn.jsdelivr.net/npm/diff@5/dist/diff.min.js"></script>
     <script src="../components/load-components.js"></script>
     <style>
-        .tool-card {
-            background: white; border-radius: var(--border-radius); padding: 28px;
-            box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
-        }
-        .tool-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-        }
-        .tool-card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
-
         /* 工具栏 */
-        .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-        .view-toggle { display: flex; border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden; }
+        .toolbar {
+            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
+            padding: 10px 14px; background: #f8f9fb; border-radius: 10px; border: 1px solid #eef0f4;
+        }
+        .view-toggle { display: flex; border: none; border-radius: 8px; overflow: hidden; background: #eef0f4; }
         .view-btn {
-            padding: 8px 16px; border: none; cursor: pointer; font-size: 0.85rem;
-            font-weight: 500; background: white; transition: var(--transition);
+            padding: 7px 16px; border: none; cursor: pointer; font-size: 0.82rem;
+            font-weight: 600; background: transparent; transition: var(--transition); color: #666;
         }
-        .view-btn.active { background: var(--primary-color); color: white; }
-        .view-btn:hover:not(.active) { background: #f0f2f5; }
-
-        .tool-btn {
-            padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
-            font-size: 0.85rem; font-weight: 500; transition: var(--transition);
-            display: inline-flex; align-items: center; gap: 6px; margin-left: auto;
-        }
-        .tool-btn-primary { background: var(--primary-color); color: white; }
-        .tool-btn-primary:hover { background: var(--secondary-color); }
-        .tool-btn-outline { background: white; border: 1px solid #ddd; color: #555; }
-        .tool-btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .view-btn.active { background: var(--primary-color); color: white; box-shadow: 0 2px 6px rgba(67,97,238,0.25); }
+        .view-btn:hover:not(.active) { background: rgba(67,97,238,0.06); color: var(--primary-color); }
 
         /* 输入区 */
-        .input-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; margin-bottom: 16px; }
-        .input-panel label { display: block; font-weight: 600; color: var(--dark-color); margin-bottom: 6px; font-size: 0.9rem; }
+        .input-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; margin-bottom: 18px; }
+        .input-panel label { display: block; font-weight: 700; color: var(--dark-color); margin-bottom: 8px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.4px; }
         .diff-input {
-            width: 100%; min-height: 200px; padding: 14px; border: 1px solid #e9ecef;
-            border-radius: var(--border-radius); font-family: 'Consolas', monospace;
-            font-size: 0.9rem; resize: vertical; line-height: 1.6;
+            width: 100%; min-height: 200px; padding: 16px; border: 1.5px solid #e9ecef;
+            border-radius: 10px; font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
+            font-size: 0.88rem; resize: vertical; line-height: 1.7; transition: var(--transition);
+            background: #fdfdfe;
         }
-        .diff-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.1); }
+        .diff-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08); }
         .input-actions { display: flex; flex-direction: column; gap: 8px; justify-content: center; align-items: center; }
+        .input-actions .tool-btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            box-shadow: 0 2px 8px rgba(67,97,238,0.2);
+        }
 
         /* 统计 */
-        .stats-bar { display: flex; gap: 20px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; margin-bottom: 16px; flex-wrap: wrap; }
-        .stat-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+        .stats-bar {
+            display: flex; gap: 24px; padding: 14px 0; border-bottom: 1px solid #f3f4f6; margin-bottom: 18px; flex-wrap: wrap;
+        }
+        .stat-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 500; }
         .stat-dot { width: 10px; height: 10px; border-radius: 50%; }
-        .stat-add { background: #22c55e; }
-        .stat-del { background: #ef4444; }
-        .stat-same { background: #e9ecef; }
+        .stat-add { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.15); }
+        .stat-del { background: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+        .stat-same { background: #c8cdd6; }
 
         /* 差异结果 - 并排 */
-        .diff-side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #e9ecef; border-radius: var(--border-radius); overflow: hidden; }
+        .diff-side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
         .diff-panel { overflow: auto; max-height: 500px; }
-        .diff-panel-header { padding: 8px 12px; background: #f8f9fa; font-weight: 600; font-size: 0.85rem; border-bottom: 1px solid #e9ecef; position: sticky; top: 0; z-index: 1; }
-        .diff-line { display: flex; font-family: 'Consolas', monospace; font-size: 0.85rem; line-height: 1.7; min-height: 24px; }
-        .diff-line-num { min-width: 40px; text-align: right; padding: 0 8px; color: #adb5bd; user-select: none; background: #fafafa; border-right: 1px solid #f0f0f0; }
-        .diff-line-content { flex: 1; padding: 0 12px; white-space: pre-wrap; word-break: break-all; }
-        .diff-line.add { background: #dcfce7; }
+        .diff-panel-header {
+            padding: 10px 16px; background: linear-gradient(180deg, #f0f2f6, #ebedf1);
+            font-weight: 700; font-size: 0.78rem; border-bottom: 1px solid #dfe2e8; position: sticky; top: 0; z-index: 1;
+            color: #666; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .diff-line { display: flex; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.82rem; line-height: 1.8; min-height: 24px; }
+        .diff-line-num { min-width: 44px; text-align: right; padding: 0 10px; color: #b8bfc8; user-select: none; background: #f8f9fb; border-right: 1px solid #f0f2f6; font-size: 0.78rem; }
+        .diff-line-content { flex: 1; padding: 0 14px; white-space: pre-wrap; word-break: break-all; }
+        .diff-line.add { background: linear-gradient(90deg, #dcfce7, #f0fdf4); }
         .diff-line.add .diff-line-num { background: #bbf7d0; color: #166534; }
-        .diff-line.del { background: #fef2f2; }
+        .diff-line.del { background: linear-gradient(90deg, #fef2f2, #fff5f5); }
         .diff-line.del .diff-line-num { background: #fecaca; color: #991b1b; }
-        .diff-line.empty { background: #f9f9f9; }
+        .diff-line.empty { background: #fafbfc; }
 
         /* 差异结果 - 统一 */
-        .diff-unified { border: 1px solid #e9ecef; border-radius: var(--border-radius); overflow: hidden; }
+        .diff-unified { border: 1px solid #e9ecef; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
         .diff-unified .diff-line { }
-        .diff-unified .diff-line.add { background: #dcfce7; }
-        .diff-unified .diff-line.del { background: #fef2f2; }
-        .diff-marker { min-width: 20px; text-align: center; font-weight: 600; }
+        .diff-unified .diff-line.add { background: linear-gradient(90deg, #dcfce7, #f0fdf4); }
+        .diff-unified .diff-line.del { background: linear-gradient(90deg, #fef2f2, #fff5f5); }
+        .diff-marker { min-width: 22px; text-align: center; font-weight: 700; font-size: 0.85rem; }
         .diff-line.add .diff-marker { color: #16a34a; }
         .diff-line.del .diff-marker { color: #dc2626; }
 
