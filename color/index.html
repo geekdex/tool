@@ -8,21 +8,15 @@
     <link rel="stylesheet" href="../components/shared-styles.css">
     <script src="../components/load-components.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
-        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-        main { padding: 40px 0; }
-        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
-        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
-        .card {
+        .tool-card {
             background: white; border-radius: var(--border-radius); padding: 28px;
             box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
         }
-        .card::before {
+        .tool-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
         }
-        .card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
+        .tool-card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
 
         /* 颜色选择区 */
         .picker-area { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
@@ -44,14 +38,14 @@
         }
         .hex-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.1); }
 
-        .btn {
+        .tool-btn {
             padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
             font-size: 0.9rem; font-weight: 500; transition: var(--transition);
             display: inline-flex; align-items: center; gap: 6px;
         }
-        .btn-primary { background: var(--primary-color); color: white; }
-        .btn-primary:hover { background: var(--secondary-color); }
-        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+        .tool-btn-primary { background: var(--primary-color); color: white; }
+        .tool-btn-primary:hover { background: var(--secondary-color); }
+        .tool-btn-sm { padding: 6px 12px; font-size: 0.8rem; }
 
         /* 颜色格式 */
         .format-row {
@@ -98,19 +92,22 @@
         .contrast-pass { background: #dcfce7; color: #166534; }
         .contrast-fail { background: #fef2f2; color: #991b1b; }
 
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .picker-area { flex-direction: column; align-items: center; }
+        }
+        @media (max-width: 768px) {
             .color-preview { width: 140px; height: 140px; }
         }
     </style>
 </head>
 <body>
     <div id="header-container"></div>
-    <main class="container">
-        <h1 class="page-title"><i class="fas fa-palette" style="color:#ff6b6b;"></i> 颜色选择器</h1>
-        <p class="page-subtitle">选择颜色、转换格式、生成配色方案</p>
+    <main class="container tool-main">
+        <h1 class="tool-page-title"><i class="fas fa-palette" style="color:#ff6b6b;"></i> 颜色选择器</h1>
+        <p class="tool-page-subtitle">选择颜色、转换格式、生成配色方案</p>
+        <div class="tool-content">
 
-        <div class="card">
+        <div class="tool-card">
             <div class="picker-area">
                 <div class="color-preview-wrap">
                     <div class="color-preview" id="colorPreview" style="background:#4361ee;">
@@ -120,24 +117,24 @@
                 <div class="picker-info">
                     <div class="hex-input-row">
                         <input type="text" class="hex-input" id="hexInput" value="#4361EE" maxlength="7" placeholder="#RRGGBB">
-                        <button class="btn btn-primary btn-sm" onclick="copyText(document.getElementById('hexInput').value)"><i class="fas fa-copy"></i></button>
+                        <button class="tool-btn tool-btn-primary tool-btn-sm" onclick="copyText(document.getElementById('hexInput').value)"><i class="fas fa-copy"></i></button>
                     </div>
                     <div class="format-row">
                         <span class="format-label">RGB</span>
                         <span class="format-value" id="rgbValue">rgb(67, 97, 238)</span>
-                        <button class="btn btn-primary btn-sm" onclick="copyText(document.getElementById('rgbValue').textContent)"><i class="fas fa-copy"></i></button>
+                        <button class="tool-btn tool-btn-primary tool-btn-sm" onclick="copyText(document.getElementById('rgbValue').textContent)"><i class="fas fa-copy"></i></button>
                     </div>
                     <div class="format-row">
                         <span class="format-label">HSL</span>
                         <span class="format-value" id="hslValue">hsl(229, 84%, 60%)</span>
-                        <button class="btn btn-primary btn-sm" onclick="copyText(document.getElementById('hslValue').textContent)"><i class="fas fa-copy"></i></button>
+                        <button class="tool-btn tool-btn-primary tool-btn-sm" onclick="copyText(document.getElementById('hslValue').textContent)"><i class="fas fa-copy"></i></button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title">配色方案</div>
+        <div class="tool-card">
+            <div class="tool-card-title">配色方案</div>
             <div class="scheme-tabs">
                 <div class="scheme-tab active" data-scheme="complementary">互补色</div>
                 <div class="scheme-tab" data-scheme="analogous">类似色</div>
@@ -148,8 +145,8 @@
             <div class="scheme-colors" id="schemeColors"></div>
         </div>
 
-        <div class="card">
-            <div class="card-title">对比度检查</div>
+        <div class="tool-card">
+            <div class="tool-card-title">对比度检查</div>
             <div class="contrast-row">
                 <div>
                     <label style="font-size:0.85rem;color:var(--gray-color);">前景色</label>
@@ -168,6 +165,7 @@
                     示例文本
                 </div>
             </div>
+        </div>
         </div>
     </main>
     <div id="footer-container"></div>

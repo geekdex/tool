@@ -9,13 +9,10 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="../components/load-components.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
-        body { background-color: #f0f2f5; color: #333; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 100%; margin: 0 auto; padding: 0 20px; flex: 1; display: flex; flex-direction: column; }
-        main { padding: 20px 0; flex: 1; display: flex; flex-direction: column; }
+        body { display: flex; flex-direction: column; min-height: 100vh; }
         .page-header { text-align: center; margin-bottom: 16px; }
-        .page-title { font-size: 1.5rem; color: var(--dark-color); margin-bottom: 4px; }
-        .page-subtitle { color: var(--gray-color); font-size: 0.9rem; }
+        .tool-page-title { font-size: 1.5rem; color: var(--dark-color); margin-bottom: 4px; }
+        .tool-page-subtitle { color: var(--gray-color); font-size: 0.9rem; }
 
         /* 工具栏 */
         .toolbar {
@@ -86,13 +83,12 @@
 </head>
 <body>
     <div id="header-container"></div>
-    <main class="container">
+    <main class="container tool-main" style="flex: 1; display: flex; flex-direction: column;">
         <div class="page-header">
-            <h1 class="page-title"><i class="fab fa-markdown" style="color:#06d6a0;"></i> Markdown编辑器</h1>
-            <p class="page-subtitle">实时预览，支持常用 Markdown 语法</p>
+            <h1 class="tool-page-title"><i class="fab fa-markdown" style="color:#06d6a0;"></i> Markdown编辑器</h1>
+            <p class="tool-page-subtitle">实时预览，支持常用 Markdown 语法</p>
         </div>
-
-        <div style="flex:1;display:flex;flex-direction:column;">
+        <div class="tool-content-wide" style="flex:1;display:flex;flex-direction:column;">
             <div class="toolbar">
                 <button class="toolbar-btn" title="加粗" onclick="insertMd('**','**')"><i class="fas fa-bold"></i></button>
                 <button class="toolbar-btn" title="斜体" onclick="insertMd('*','*')"><i class="fas fa-italic"></i></button>
@@ -132,6 +128,7 @@
                 <span id="wordCount">0 词</span>
                 <span id="lineCount">0 行</span>
             </div>
+        </div>
         </div>
     </main>
     <div id="footer-container"></div>

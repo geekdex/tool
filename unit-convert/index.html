@@ -8,21 +8,15 @@
     <link rel="stylesheet" href="../components/shared-styles.css">
     <script src="../components/load-components.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
-        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-        main { padding: 40px 0; }
-        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
-        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
-        .card {
+        .tool-card {
             background: white; border-radius: var(--border-radius); padding: 28px;
             box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
         }
-        .card::before {
+        .tool-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
         }
-        .card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
+        .tool-card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
 
         /* 分类标签 */
         .category-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
@@ -61,19 +55,22 @@
         .ref-table tr:hover { background: rgba(67,97,238,0.03); }
         .ref-table .val { font-family: 'Consolas', monospace; color: var(--dark-color); font-weight: 500; }
 
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .convert-row { flex-direction: column; }
+        }
+        @media (max-width: 768px) {
             .swap-btn { transform: rotate(90deg); align-self: center; }
         }
     </style>
 </head>
 <body>
     <div id="header-container"></div>
-    <main class="container">
-        <h1 class="page-title"><i class="fas fa-ruler-combined" style="color:#7209b7;"></i> 单位转换器</h1>
-        <p class="page-subtitle">长度、重量、温度、速度、面积、体积等多种单位快速转换</p>
+    <main class="container tool-main">
+        <h1 class="tool-page-title"><i class="fas fa-ruler-combined" style="color:#7209b7;"></i> 单位转换器</h1>
+        <p class="tool-page-subtitle">长度、重量、温度、速度、面积、体积等多种单位快速转换</p>
+        <div class="tool-content">
 
-        <div class="card">
+        <div class="tool-card">
             <div class="category-tabs" id="categoryTabs"></div>
             <div class="convert-row">
                 <div class="convert-group">
@@ -97,12 +94,13 @@
             <div class="result-text" id="resultText">-</div>
         </div>
 
-        <div class="card">
-            <div class="card-title">快速参考表</div>
+        <div class="tool-card">
+            <div class="tool-card-title">快速参考表</div>
             <table class="ref-table" id="refTable">
                 <thead><tr><th>单位</th><th>等值</th></tr></thead>
                 <tbody></tbody>
             </table>
+        </div>
         </div>
     </main>
     <div id="footer-container"></div>

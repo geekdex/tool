@@ -8,32 +8,9 @@
     <link rel="stylesheet" href="../components/shared-styles.css">
     <script src="../components/load-components.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
-        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-        main { padding: 40px 0; }
-        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
-        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
-        .card {
-            background: white; border-radius: var(--border-radius); padding: 28px;
-            box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
-        }
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-        }
 
         /* 工具栏 */
         .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
-        .btn {
-            padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
-            font-size: 0.85rem; font-weight: 500; transition: var(--transition);
-            display: inline-flex; align-items: center; gap: 6px;
-        }
-        .btn-primary { background: var(--primary-color); color: white; }
-        .btn-primary:hover { background: var(--secondary-color); }
-        .btn-outline { background: white; border: 1px solid #ddd; color: #555; }
-        .btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
         .indent-select {
             padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.85rem;
             cursor: pointer;
@@ -97,22 +74,22 @@
 </head>
 <body>
     <div id="header-container"></div>
-    <main class="container">
-        <h1 class="page-title"><i class="fas fa-code" style="color:#ff9e00;"></i> JSON格式化</h1>
-        <p class="page-subtitle">格式化、验证、压缩 JSON 数据</p>
-
-        <div class="card">
+    <main class="container tool-main">
+        <h1 class="tool-page-title"><i class="fas fa-code" style="color:#ff9e00;"></i> JSON格式化</h1>
+        <p class="tool-page-subtitle">格式化、验证、压缩 JSON 数据</p>
+        <div class="tool-content">
+        <div class="tool-card">
             <div class="toolbar">
-                <button class="btn btn-primary" id="formatBtn"><i class="fas fa-magic"></i> 格式化</button>
-                <button class="btn btn-outline" id="minifyBtn"><i class="fas fa-compress"></i> 压缩</button>
+                <button class="tool-btn tool-btn-primary" id="formatBtn"><i class="fas fa-magic"></i> 格式化</button>
+                <button class="tool-btn tool-btn-outline" id="minifyBtn"><i class="fas fa-compress"></i> 压缩</button>
                 <select class="indent-select" id="indentSelect">
                     <option value="2">缩进: 2空格</option>
                     <option value="4">缩进: 4空格</option>
                     <option value="tab">缩进: Tab</option>
                 </select>
-                <button class="btn btn-outline" id="sampleBtn"><i class="fas fa-file-code"></i> 示例</button>
-                <button class="btn btn-outline" id="copyBtn"><i class="fas fa-copy"></i> 复制结果</button>
-                <button class="btn btn-outline" id="clearBtn"><i class="fas fa-trash"></i> 清空</button>
+                <button class="tool-btn tool-btn-outline" id="sampleBtn"><i class="fas fa-file-code"></i> 示例</button>
+                <button class="tool-btn tool-btn-outline" id="copyBtn"><i class="fas fa-copy"></i> 复制结果</button>
+                <button class="tool-btn tool-btn-outline" id="clearBtn"><i class="fas fa-trash"></i> 清空</button>
             </div>
 
             <div class="editor-grid">
@@ -136,6 +113,7 @@
                 <span id="statusText" class="status-info">等待输入...</span>
                 <span id="sizeInfo" class="status-info"></span>
             </div>
+        </div>
         </div>
     </main>
     <div id="footer-container"></div>

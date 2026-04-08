@@ -8,21 +8,15 @@
     <link rel="stylesheet" href="../components/shared-styles.css">
     <script src="../components/load-components.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
-        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-        main { padding: 40px 0; }
-        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
-        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
-        .card {
+        .tool-card {
             background: white; border-radius: var(--border-radius); padding: 28px;
             box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
         }
-        .card::before {
+        .tool-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
         }
-        .card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
+        .tool-card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
 
         /* 上传区 */
         .upload-zone {
@@ -53,15 +47,15 @@
         }
         .quality-value { min-width: 40px; text-align: center; font-weight: 600; color: var(--primary-color); }
 
-        .btn {
+        .tool-btn {
             padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;
             font-size: 0.9rem; font-weight: 500; transition: var(--transition);
             display: inline-flex; align-items: center; gap: 8px;
         }
-        .btn-primary { background: var(--primary-color); color: white; }
-        .btn-primary:hover { background: var(--secondary-color); transform: translateY(-1px); }
-        .btn-outline { background: white; border: 1px solid #ddd; color: #555; }
-        .btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .tool-btn-primary { background: var(--primary-color); color: white; }
+        .tool-btn-primary:hover { background: var(--secondary-color); transform: translateY(-1px); }
+        .tool-btn-outline { background: white; border: 1px solid #ddd; color: #555; }
+        .tool-btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
         .btn-success { background: #22c55e; color: white; }
         .btn-success:hover { background: #16a34a; }
         .action-bar { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
@@ -103,11 +97,11 @@
 </head>
 <body>
     <div id="header-container"></div>
-    <main class="container">
-        <h1 class="page-title"><i class="fas fa-compress-alt" style="color:#f72585;"></i> 图片压缩</h1>
-        <p class="page-subtitle">在线压缩图片，支持格式转换和质量调整</p>
-
-        <div class="card" id="uploadCard">
+    <main class="container tool-main">
+        <h1 class="tool-page-title"><i class="fas fa-compress-alt" style="color:#f72585;"></i> 图片压缩</h1>
+        <p class="tool-page-subtitle">在线压缩图片，支持格式转换和质量调整</p>
+        <div class="tool-content-wide">
+        <div class="tool-card" id="uploadCard">
             <div class="upload-zone" id="uploadZone">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>拖拽图片到此处，或点击选择文件</p>
@@ -116,8 +110,8 @@
             <input type="file" id="fileInput" accept="image/*" multiple>
         </div>
 
-        <div class="card" id="settingsCard" style="display:none;">
-            <div class="card-title">压缩设置</div>
+        <div class="tool-card" id="settingsCard" style="display:none;">
+            <div class="tool-card-title">压缩设置</div>
             <div class="settings-grid">
                 <div class="setting-item">
                     <label>输出格式</label>
@@ -140,13 +134,13 @@
                 </div>
             </div>
             <div class="action-bar">
-                <button class="btn btn-primary" id="compressBtn"><i class="fas fa-compress"></i> 开始压缩</button>
-                <button class="btn btn-outline" id="resetBtn"><i class="fas fa-redo"></i> 重新选择</button>
+                <button class="tool-btn tool-btn-primary" id="compressBtn"><i class="fas fa-compress"></i> 开始压缩</button>
+                <button class="tool-btn tool-btn-outline" id="resetBtn"><i class="fas fa-redo"></i> 重新选择</button>
             </div>
         </div>
 
-        <div class="card" id="resultCard" style="display:none;">
-            <div class="card-title">压缩结果</div>
+        <div class="tool-card" id="resultCard" style="display:none;">
+            <div class="tool-card-title">压缩结果</div>
             <div id="batchList"></div>
             <div class="preview-grid" id="previewGrid" style="display:none;">
                 <div class="preview-panel">
@@ -175,8 +169,9 @@
                 </div>
             </div>
             <div class="action-bar">
-                <button class="btn btn-success" id="downloadBtn"><i class="fas fa-download"></i> 下载全部</button>
+                <button class="tool-btn btn-success" id="downloadBtn"><i class="fas fa-download"></i> 下载全部</button>
             </div>
+        </div>
         </div>
     </main>
     <div id="footer-container"></div>

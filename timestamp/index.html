@@ -10,154 +10,18 @@
     <!-- 组件加载脚本（需要在使用前加载） -->
     <script src="../components/load-components.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-        }
-        
-        :root {
-            --primary-color: #4361ee;
-            --primary-light: #4895ef;
-            --secondary-color: #3f37c9;
-            --dark-color: #1a1a2e;
-            --light-color: #f8f9fa;
-            --gray-color: #6c757d;
-            --success-color: #4cc9f0;
-            --border-radius: 10px;
-            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-        
-        body {
-            background-color: #f0f2f5;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* 头部导航 */
-        header {
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        .logo i {
-            font-size: 1.8rem;
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
+        /* 页面特有样式 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 25px;
-        }
-        
-        nav a {
-            text-decoration: none;
-            color: var(--dark-color);
-            font-weight: 500;
-            padding: 8px 0;
-            position: relative;
-            transition: var(--transition);
-        }
-        
-        nav a:hover {
-            color: var(--primary-color);
-        }
-        
-        nav a.active {
-            color: var(--primary-color);
-        }
-        
-        nav a.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: var(--primary-color);
-            border-radius: 3px;
-        }
-        
-        .user-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .btn-login, .btn-save {
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-        }
-        
-        .btn-login {
-            background-color: transparent;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-        }
-        
-        .btn-login:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-save {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-save:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-        
-        /* 主内容区 */
-        main {
-            padding: 40px 0;
-        }
-        
-        .page-title {
-            font-size: 2.2rem;
-            color: var(--dark-color);
-            margin-bottom: 10px;
-            text-align: center;
+            margin-bottom: 40px;
         }
 
-        .page-subtitle {
-            color: var(--gray-color);
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            text-align: center;
+        @media (max-width: 600px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
         .tools-grid {
@@ -173,17 +37,27 @@
             }
         }
         
-        .tool-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--box-shadow);
+        /* 时间戳工具特有：工具卡片带 hover */
+        .ts-tool-card {
             transition: var(--transition);
         }
-        
-        .tool-card:hover {
+
+        .ts-tool-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+            box-shadow: var(--box-shadow-hover);
+        }
+
+        .ts-tool-card h3 {
+            font-size: 1.3rem;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ts-tool-card h3 i {
+            color: var(--primary-color);
         }
         
         .tool-card h3 {
@@ -298,15 +172,6 @@
             .copy-btn {
                 flex: 0 0 auto;
             }
-        }
-        
-        /* 转换区域 */
-        .converter-section {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: var(--box-shadow);
-            margin-bottom: 40px;
         }
         
         .section-title {
@@ -465,68 +330,11 @@
             font-weight: 500;
         }
         
-        /* 主内容区域 */
-        .content-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .main-content {
-            width: 100%;
-        }
 
         .intro-text {
             color: var(--gray-color);
             line-height: 1.7;
             margin-bottom: 20px;
-        }
-
-        /* 自定义页脚样式（仅用于custom-footer，公共footer使用shared-styles.css） */
-        #custom-footer {
-            background-color: var(--dark-color);
-            color: white;
-            padding: 40px 0 20px;
-            margin-top: 50px;
-        }
-
-        #custom-footer .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        #custom-footer .footer-section h3 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        #custom-footer .footer-links {
-            list-style: none;
-        }
-
-        #custom-footer .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        #custom-footer .footer-links a {
-            color: #aaa;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        #custom-footer .footer-links a:hover {
-            color: white;
-        }
-
-        #custom-footer .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #aaa;
-            font-size: 0.9rem;
         }
 
         /* 响应式设计 */
@@ -545,17 +353,6 @@
         }
 
         @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
-            }
-
             .converter-row {
                 flex-direction: column;
                 gap: 12px;
@@ -602,23 +399,19 @@
         </div>
     </header>
 
-    <main class="container">
+    <main class="container tool-main">
         <!-- 标题区域 -->
-        <div class="page-header">
-            <h1 class="page-title">时间戳转换工具</h1>
-            <p class="page-subtitle">在线转换Unix时间戳与人类可读日期格式</p>
-        </div>
-        
-        <div class="content-wrapper">
-            <!-- 主要内容区 -->
-            <div class="main-content">
+        <h1 class="tool-page-title">时间戳转换工具</h1>
+        <p class="tool-page-subtitle">在线转换Unix时间戳与人类可读日期格式</p>
+
+        <div class="tool-content">
                 <!-- 工具卡片 -->
                 <div class="tools-grid">
-                    <div class="tool-card">
+                    <div class="tool-card ts-tool-card">
                         <h3><i class="fas fa-exchange-alt"></i> 时间戳转换</h3>
                         <p>在Unix时间戳和日期时间格式之间相互转换</p>
                     </div>
-                    <div class="tool-card">
+                    <div class="tool-card ts-tool-card">
                         <h3><i class="fas fa-clock"></i> 当前时间戳</h3>
                         <div class="timestamp-display-container">
                             <div class="current-timestamp" id="currentTimestamp">1764603845</div>
@@ -641,7 +434,7 @@
                 </div>
                 
                 <!-- 转换器区域 -->
-                <div class="converter-section">
+                <div class="tool-card">
                     <h2 class="section-title">时间戳转换器</h2>
 
                     <div class="converter-row">
@@ -724,8 +517,8 @@
                 </div>
                 
                 <!-- 简介部分 -->
-                <div class="converter-section">
-                    <h2 class="section-title">时间戳简介</h2>
+                <div class="tool-card">
+                    <h2 class="tool-card-title">时间戳简介</h2>
                     <p class="intro-text">
                         时间戳，是从1970年1月1日（UTC/GMT的午夜）开始所经过的秒数（不考虑闰秒），用于表示一个时间点。这种格式对于计算机系统处理时间非常高效，但对于人类阅读并不友好。本工具能够帮助您在Unix时间戳和人类可读的日期时间格式之间进行转换。
                     </p>
@@ -733,7 +526,6 @@
                         Unix时间戳被广泛应用于各种编程语言和系统中，包括JavaScript、Python、PHP、Java等。通过本工具，您可以轻松地将时间戳转换为可读的日期时间格式，或将日期时间转换为时间戳。
                     </p>
                 </div>
-            </div>
         </div>
     </main>
 

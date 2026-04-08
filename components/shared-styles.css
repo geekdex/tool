@@ -285,7 +285,135 @@ footer {
     color: #555;
 }
 
+/* 工具页面通用布局 */
+main.tool-main {
+    padding: 40px 0;
+}
+
+.tool-page-title {
+    font-size: 2rem;
+    color: var(--dark-color);
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.tool-page-subtitle {
+    color: var(--gray-color);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* 工具内容区 - 标准宽度 */
+.tool-content {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+/* 工具内容区 - 宽屏 */
+.tool-content-wide {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 工具卡片通用样式 */
+.tool-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 28px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+}
+
+.tool-card-title {
+    font-size: 1.1rem;
+    color: var(--dark-color);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* 通用按钮 */
+.tool-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tool-btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.tool-btn-primary:hover {
+    background: var(--secondary-color);
+}
+
+.tool-btn-outline {
+    background: white;
+    border: 1px solid #ddd;
+    color: #555;
+}
+
+.tool-btn-outline:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.tool-btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+/* 通用输入框 */
+.tool-input, .tool-select, .tool-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.tool-input:focus, .tool-select:focus, .tool-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.tool-textarea {
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.tool-textarea-code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+}
+
 /* 响应式设计 */
+@media (max-width: 992px) {
+    .tool-content {
+        max-width: 100%;
+    }
+}
+
 @media (max-width: 768px) {
     .header-container {
         flex-direction: column;
@@ -296,6 +424,22 @@ footer {
         flex-wrap: wrap;
         justify-content: center;
         gap: 20px;
+    }
+
+    .tool-page-title {
+        font-size: 1.5rem;
+    }
+
+    .tool-page-subtitle {
+        font-size: 0.9rem;
+    }
+
+    main {
+        padding: 20px 0;
+    }
+
+    .tool-card {
+        padding: 20px;
     }
 
     .footer-content {
@@ -323,28 +467,41 @@ footer {
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+
     .logo {
         font-size: 1.4rem;
     }
-    
+
     .logo i {
         font-size: 1.6rem;
     }
-    
+
     nav a {
         font-size: 0.95rem;
     }
-    
+
     .btn-login, .btn-register {
         padding: 8px 16px;
         font-size: 0.9rem;
     }
-    
+
     footer {
         padding: 40px 0 20px;
     }
-    
+
     .footer-section h3 {
         font-size: 1.2rem;
+    }
+
+    .tool-page-title {
+        font-size: 1.3rem;
+    }
+
+    .tool-card {
+        padding: 16px;
+        border-radius: 8px;
     }
 }

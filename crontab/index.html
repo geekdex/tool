@@ -8,21 +8,6 @@
     <link rel="stylesheet" href="../components/shared-styles.css">
     <script src="../components/load-components.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
-        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-        main { padding: 40px 0; }
-        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
-        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
-        .card {
-            background: white; border-radius: var(--border-radius); padding: 28px;
-            box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
-        }
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-        }
-        .card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
 
         /* 表达式显示 */
         .expr-display {
@@ -79,15 +64,6 @@
         }
         .next-times li i { color: var(--primary-color); }
 
-        .btn {
-            padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer;
-            font-size: 0.85rem; font-weight: 500; transition: var(--transition);
-            display: inline-flex; align-items: center; gap: 6px;
-        }
-        .btn-primary { background: var(--primary-color); color: white; }
-        .btn-primary:hover { background: var(--secondary-color); }
-        .btn-outline { background: white; border: 1px solid #ddd; color: #555; }
-        .btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
 
         .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 8px; }
 
@@ -99,11 +75,11 @@
 </head>
 <body>
     <div id="header-container"></div>
-    <main class="container">
-        <h1 class="page-title"><i class="fas fa-clock" style="color:#4895ef;"></i> Crontab查询器</h1>
-        <p class="page-subtitle">Cron 定时表达式编辑器，可视化生成与解析</p>
-
-        <div class="card">
+    <main class="container tool-main">
+        <h1 class="tool-page-title"><i class="fas fa-clock" style="color:#4895ef;"></i> Crontab查询器</h1>
+        <p class="tool-page-subtitle">Cron 定时表达式编辑器，可视化生成与解析</p>
+        <div class="tool-content">
+        <div class="tool-card">
             <div class="expr-display" id="exprDisplay">
                 * * * * *
                 <button class="expr-copy" id="copyBtn" title="复制表达式"><i class="fas fa-copy"></i></button>
@@ -112,8 +88,8 @@
             <div id="errorMsg" class="error-msg"></div>
         </div>
 
-        <div class="card">
-            <div class="card-title">表达式编辑</div>
+        <div class="tool-card">
+            <div class="tool-card-title">表达式编辑</div>
             <div class="field-row">
                 <div><div class="field-label">分钟</div><div class="field-hint">0-59</div></div>
                 <input type="text" class="field-input" id="fieldMin" value="*" placeholder="* 或 */5 或 0,30">
@@ -136,14 +112,15 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-title">常用预设</div>
+        <div class="tool-card">
+            <div class="tool-card-title">常用预设</div>
             <div class="presets-grid" id="presetsGrid"></div>
         </div>
 
-        <div class="card">
-            <div class="card-title">下次执行时间</div>
+        <div class="tool-card">
+            <div class="tool-card-title">下次执行时间</div>
             <ul class="next-times" id="nextTimes"></ul>
+        </div>
         </div>
     </main>
     <div id="footer-container"></div>

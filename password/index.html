@@ -8,21 +8,15 @@
     <link rel="stylesheet" href="../components/shared-styles.css">
     <script src="../components/load-components.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
-        body { background-color: #f0f2f5; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-        main { padding: 40px 0; }
-        .page-title { font-size: 2rem; color: var(--dark-color); text-align: center; margin-bottom: 8px; }
-        .page-subtitle { color: var(--gray-color); text-align: center; margin-bottom: 30px; font-size: 1rem; }
-        .card {
+        .tool-card {
             background: white; border-radius: var(--border-radius); padding: 28px;
             box-shadow: var(--box-shadow); margin-bottom: 24px; position: relative; overflow: hidden;
         }
-        .card::before {
+        .tool-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
             background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
         }
-        .card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
+        .tool-card-title { font-size: 1.1rem; color: var(--dark-color); margin-bottom: 20px; font-weight: 600; }
 
         /* 密码展示 */
         .password-display {
@@ -33,13 +27,13 @@
             letter-spacing: 1px;
         }
         .password-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: center; }
-        .btn {
+        .tool-btn {
             padding: 10px 20px; border: none; border-radius: var(--border-radius); cursor: pointer;
             font-size: 0.95rem; font-weight: 500; transition: var(--transition); display: flex;
             align-items: center; gap: 8px;
         }
-        .btn-primary { background: var(--primary-color); color: white; }
-        .btn-primary:hover { background: var(--secondary-color); transform: translateY(-1px); }
+        .tool-btn-primary { background: var(--primary-color); color: white; }
+        .tool-btn-primary:hover { background: var(--secondary-color); transform: translateY(-1px); }
         .btn-secondary { background: #e9ecef; color: #495057; }
         .btn-secondary:hover { background: #dee2e6; }
 
@@ -109,8 +103,10 @@
         }
         .history-item .copy-icon:hover { color: var(--primary-color); }
 
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .setting-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+        }
+        @media (max-width: 768px) {
             input[type="range"] { width: 100%; }
             .password-display { font-size: 1.1rem; padding: 16px; }
         }
@@ -118,15 +114,16 @@
 </head>
 <body>
     <div id="header-container"></div>
-    <main class="container">
-        <h1 class="page-title"><i class="fas fa-key" style="color:var(--secondary-color);"></i> 密码生成器</h1>
-        <p class="page-subtitle">生成高强度随机密码，保护您的账户安全</p>
+    <main class="container tool-main">
+        <h1 class="tool-page-title"><i class="fas fa-key" style="color:var(--secondary-color);"></i> 密码生成器</h1>
+        <p class="tool-page-subtitle">生成高强度随机密码，保护您的账户安全</p>
+        <div class="tool-content">
 
-        <div class="card">
+        <div class="tool-card">
             <div class="password-display" id="passwordDisplay">点击下方按钮生成密码</div>
             <div class="password-actions">
-                <button class="btn btn-primary" id="generateBtn"><i class="fas fa-sync-alt"></i> 生成密码</button>
-                <button class="btn btn-secondary" id="copyBtn"><i class="fas fa-copy"></i> 复制</button>
+                <button class="tool-btn tool-btn-primary" id="generateBtn"><i class="fas fa-sync-alt"></i> 生成密码</button>
+                <button class="tool-btn btn-secondary" id="copyBtn"><i class="fas fa-copy"></i> 复制</button>
             </div>
             <div class="strength-bar">
                 <div class="strength-seg" id="seg1"></div>
@@ -137,8 +134,8 @@
             <div class="strength-label" id="strengthLabel"></div>
         </div>
 
-        <div class="card">
-            <div class="card-title">密码设置</div>
+        <div class="tool-card">
+            <div class="tool-card-title">密码设置</div>
             <div class="setting-row">
                 <div>
                     <div class="setting-label">密码长度</div>
@@ -180,9 +177,10 @@
             </div>
         </div>
 
-        <div class="card" id="historyCard" style="display:none;">
-            <div class="card-title">生成历史</div>
+        <div class="tool-card" id="historyCard" style="display:none;">
+            <div class="tool-card-title">生成历史</div>
             <div id="historyList"></div>
+        </div>
         </div>
     </main>
     <div id="footer-container"></div>
