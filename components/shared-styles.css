@@ -53,21 +53,21 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 0;
+    padding: 10px 0;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 1.7rem;
-    font-weight: 800;
+    gap: 8px;
+    font-size: 1.3rem;
+    font-weight: 700;
     color: var(--primary-color);
     text-decoration: none;
 }
 
 .logo i {
-    font-size: 2rem;
+    font-size: 1.3rem;
 }
 
 .logo-text {
@@ -80,17 +80,17 @@ header {
 nav ul {
     display: flex;
     list-style: none;
-    gap: 30px;
+    gap: 20px;
 }
 
 nav a {
     text-decoration: none;
     color: var(--dark-color);
-    font-weight: 600;
-    padding: 8px 0;
+    font-weight: 500;
+    padding: 6px 0;
     position: relative;
     transition: var(--transition);
-    font-size: 1.05rem;
+    font-size: 0.9rem;
 }
 
 nav a:hover {
@@ -157,8 +157,8 @@ nav a.active::after {
 footer {
     background-color: var(--dark-color);
     color: white;
-    padding: 70px 0 30px;
-    margin-top: 50px;
+    padding: 28px 0 16px;
+    margin-top: 30px;
     width: 100%;
 }
 
@@ -223,10 +223,10 @@ footer {
 
 .copyright {
     text-align: center;
-    padding-top: 30px;
+    padding-top: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: #aaa;
-    font-size: 0.95rem;
+    font-size: 0.8rem;
 }
 
 /* 简洁版页脚样式 */
@@ -234,7 +234,7 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 12px;
     flex-wrap: wrap;
     gap: 20px;
 }
@@ -248,10 +248,10 @@ footer {
 .footer-logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     text-decoration: none;
     color: white;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
 }
 
@@ -260,8 +260,8 @@ footer {
 }
 
 .footer-desc {
-    color: #aaa;
-    font-size: 0.9rem;
+    color: #999;
+    font-size: 0.8rem;
 }
 
 .footer-nav {
@@ -271,9 +271,9 @@ footer {
 }
 
 .footer-nav a {
-    color: #ccc;
+    color: #bbb;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     transition: var(--transition);
 }
 
@@ -287,21 +287,21 @@ footer {
 
 /* 工具页面通用布局 */
 main.tool-main {
-    padding: 24px 0;
+    padding: 18px 0;
 }
 
 .tool-page-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: var(--dark-color);
     text-align: center;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .tool-page-subtitle {
     color: var(--gray-color);
     text-align: center;
-    margin-bottom: 18px;
-    font-size: 0.95rem;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
 }
 
 /* 工具内容区 - 标准宽度 */
@@ -320,26 +320,27 @@ main.tool-main {
 .tool-card {
     background: white;
     border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-    margin-bottom: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    margin-bottom: 12px;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.05);
     transition: box-shadow 0.3s ease;
 }
 
 .tool-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; height: 4px;
+    top: 0; left: 0; right: 0; height: 3px;
     background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    opacity: 0.7;
 }
 
 .tool-card-title {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--dark-color);
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -349,7 +350,7 @@ main.tool-main {
 .tool-card-title::before {
     content: '';
     width: 3px;
-    height: 14px;
+    height: 12px;
     background: linear-gradient(180deg, var(--primary-color), var(--primary-light));
     border-radius: 2px;
 }
@@ -435,21 +436,21 @@ main.tool-main {
 @media (max-width: 768px) {
     .header-container {
         flex-direction: column;
-        gap: 12px;
+        gap: 8px;
     }
 
     nav ul {
         flex-wrap: wrap;
         justify-content: center;
-        gap: 15px;
+        gap: 12px;
     }
 
     .tool-page-title {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
     }
 
     .tool-page-subtitle {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     main {
@@ -466,7 +467,7 @@ main.tool-main {
     }
 
     footer {
-        padding: 30px 0 15px;
+        padding: 20px 0 12px;
     }
 
     .footer-simple {
@@ -490,15 +491,15 @@ main.tool-main {
     }
 
     .logo {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 
     .logo i {
-        font-size: 1.6rem;
+        font-size: 1.2rem;
     }
 
     nav a {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
 
     .btn-login, .btn-register {
@@ -507,7 +508,7 @@ main.tool-main {
     }
 
     footer {
-        padding: 30px 0 15px;
+        padding: 20px 0 12px;
     }
 
     .footer-section h3 {
@@ -515,7 +516,7 @@ main.tool-main {
     }
 
     .tool-page-title {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
 
     .tool-card {
