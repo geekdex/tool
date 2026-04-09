@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP地址查询 - Tool 开发者工具集</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../components/shared-styles.css">
+    <script src="../components/load-components.js"></script>
+    <style>
+        /* 搜索区 */
+        .ip-search {
+            display: flex; gap: 12px; margin-bottom: 24px;
+        }
+        .ip-search .tool-input {
+            flex: 1; font-size: 1.05rem; padding: 12px 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .ip-search .tool-btn-primary {
+            padding: 12px 28px; font-size: 0.95rem; white-space: nowrap;
+        }
+
+        /* 我的IP卡片 */
+        .my-ip-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 14px; padding: 28px 30px; color: white; margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 8px 24px rgba(67,97,238,0.25);
+        }
+        .my-ip-label { font-size: 0.9rem; opacity: 0.85; margin-bottom: 6px; }
+        .my-ip-value {
+            font-size: 2rem; font-weight: 700; font-family: 'Consolas', 'Monaco', monospace;
+            letter-spacing: 1px;
+        }
+        .my-ip-actions { display: flex; gap: 10px; }
+        .my-ip-actions .tool-btn {
+            background: rgba(255,255,255,0.2); color: white; border: none; backdrop-filter: blur(4px);
+        }
+        .my-ip-actions .tool-btn:hover { background: rgba(255,255,255,0.35); }
+
+        /* 结果表格 */
+        .result-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+        }
+        .result-item {
+            background: #f8f9fb; border-radius: 12px; padding: 18px 20px;
+            border: 1px solid #eef0f4; transition: var(--transition);
+        }
+        .result-item:hover { border-color: var(--primary-color); background: rgba(67,97,238,0.02); }
+        .result-item.full-width { grid-column: 1 / -1; }
+        .result-label {
+            font-size: 0.82rem; color: var(--gray-color); margin-bottom: 6px; font-weight: 500;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .result-label i { font-size: 0.78rem; }
+        .result-value {
+            font-size: 1.05rem; color: var(--dark-color); font-weight: 600; word-break: break-all;
+        }
+        .result-value.mono {
+            font-family: 'Consolas', 'Monaco', monospace; font-size: 1rem;
+        }
+
+        /* 地图占位 */
+        .map-container {
+            background: #f0f2f6; border-radius: 12px; height: 220px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gray-color); font-size: 0.95rem; margin-top: 8px;
+            overflow: hidden; position: relative;
+        }
+        .map-container iframe {
+            width: 100%; height: 100%; border: none; border-radius: 12px;
+        }
+
+        /* 加载动画 */
+        .loading-spinner {
+            display: inline-block; width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3); border-top-color: white;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .result-loading {
+            display: flex; align-items: center; justify-content: center;
+            padding: 60px; color: var(--gray-color);
+        }
+        .result-loading .loading-spinner {
+            border-color: rgba(67,97,238,0.2); border-top-color: var(--primary-color);
+            width: 32px; height: 32px; margin-right: 12px;
+        }
+
+        /* 错误状态 */
+        .error-msg {
+            text-align: center; padding: 40px; color: var(--danger-color);
+        }
+        .error-msg i { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+
+        /* 历史记录 */
+        .history-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px; background: #f8f9fb; border-radius: 10px;
+            margin-bottom: 8px; border: 1px solid #eef0f4; cursor: pointer;
+            transition: var(--transition);
+        }
+        .history-item:hover { border-color: var(--primary-color); background: rgba(67,97,238,0.02); }
+        .history-item .ip-text {
+            font-family: 'Consolas', 'Monaco', monospace; font-weight: 600;
+            color: var(--dark-color);
+        }
+        .history-item .ip-location { font-size: 0.85rem; color: var(--gray-color); }
+        .history-item .ip-time { font-size: 0.78rem; color: #adb5bd; }
+
+        @media (max-width: 768px) {
+            .ip-search { flex-direction: column; }
+            .result-grid { grid-template-columns: 1fr; }
+            .my-ip-card { flex-direction: column; text-align: center; gap: 16px; }
+            .my-ip-value { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+    <main class="container tool-main">
+        <h1 class="tool-page-title"><i class="fas fa-globe" style="color:#2a9d8f;"></i> IP地址查询</h1>
+        <p class="tool-page-subtitle">查询IP地址的地理位置信息，包括国家、城市、ISP和经纬度等</p>
+        <div class="tool-content">
+
+            <!-- 我的IP -->
+            <div class="my-ip-card" id="myIpCard">
+                <div>
+                    <div class="my-ip-label"><i class="fas fa-desktop"></i> 我的IP地址</div>
+                    <div class="my-ip-value" id="myIpValue">
+                        <span class="loading-spinner"></span>
+                    </div>
+                </div>
+                <div class="my-ip-actions">
+                    <button class="tool-btn" onclick="queryIp(document.getElementById('myIpValue').dataset.ip)" title="查询详情">
+                        <i class="fas fa-search"></i> 详情
+                    </button>
+                    <button class="tool-btn" onclick="copyMyIp()" title="复制IP">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 搜索框 -->
+            <div class="tool-card">
+                <div class="tool-card-title">IP地址查询</div>
+                <div class="ip-search">
+                    <input type="text" class="tool-input" id="ipInput" placeholder="请输入IP地址，如 8.8.8.8 或 2001:4860:4860::8888" autocomplete="off">
+                    <button class="tool-btn tool-btn-primary" onclick="handleSearch()">
+                        <i class="fas fa-search"></i> 查询
+                    </button>
+                </div>
+            </div>
+
+            <!-- 查询结果 -->
+            <div class="tool-card" id="resultCard" style="display:none;">
+                <div class="tool-card-title">查询结果</div>
+                <div id="resultContent"></div>
+            </div>
+
+            <!-- 历史记录 -->
+            <div class="tool-card" id="historyCard" style="display:none;">
+                <div class="tool-card-title">查询历史</div>
+                <div id="historyList"></div>
+            </div>
+
+        </div>
+    </main>
+    <div id="footer-container"></div>
+
+    <script>
+        let queryHistory = JSON.parse(localStorage.getItem('ipQueryHistory') || '[]');
+
+        // IPv4格式验证
+        function isValidIpv4(ip) {
+            return /^(\d{1,3}\.){3}\d{1,3}$/.test(ip) && ip.split('.').every(n => {
+                const num = parseInt(n, 10);
+                return num >= 0 && num <= 255;
+            });
+        }
+
+        // IPv6格式验证
+        function isValidIpv6(ip) {
+            // 支持缩写形式，如 ::1, 2001:db8::, fe80::1%eth0
+            const cleaned = ip.replace(/%.*$/, '');
+            const pattern = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]+|::(ffff(:0{1,4})?:)?((25[0-5]|(2[0-4]|1?[0-9])?[0-9])\.){3}(25[0-5]|(2[0-4]|1?[0-9])?[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1?[0-9])?[0-9])\.){3}(25[0-5]|(2[0-4]|1?[0-9])?[0-9]))$/;
+            return pattern.test(cleaned);
+        }
+
+        function isValidIp(ip) {
+            return isValidIpv4(ip) || isValidIpv6(ip);
+        }
+
+        function isIpv6(ip) {
+            return isValidIpv6(ip);
+        }
+
+        // 获取我的IP（同时获取IPv4和IPv6）
+        async function fetchMyIp() {
+            const el = document.getElementById('myIpValue');
+            let ipv4 = '', ipv6 = '';
+
+            // 获取IPv4
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                ipv4 = data.ip;
+            } catch {}
+
+            // 获取IPv6
+            try {
+                const res = await fetch('https://api64.ipify.org?format=json');
+                const data = await res.json();
+                // api64 在有IPv6时返回IPv6，否则返回IPv4
+                if (data.ip && data.ip !== ipv4 && data.ip.includes(':')) {
+                    ipv6 = data.ip;
+                }
+            } catch {}
+
+            // 显示
+            if (ipv4 && ipv6) {
+                el.innerHTML = `<div style="margin-bottom:4px;">${ipv4}</div><div style="font-size:1.1rem;opacity:0.8;">${ipv6}</div>`;
+                el.dataset.ip = ipv4;
+                el.dataset.ipv4 = ipv4;
+                el.dataset.ipv6 = ipv6;
+            } else if (ipv4) {
+                el.textContent = ipv4;
+                el.dataset.ip = ipv4;
+                el.dataset.ipv4 = ipv4;
+            } else {
+                try {
+                    const res = await fetch('https://httpbin.org/ip');
+                    const data = await res.json();
+                    el.textContent = data.origin;
+                    el.dataset.ip = data.origin;
+                } catch {
+                    el.textContent = '获取失败';
+                    el.dataset.ip = '';
+                }
+            }
+        }
+
+        // 查询IP详细信息
+        async function queryIpDetail(ip) {
+            const resultCard = document.getElementById('resultCard');
+            const resultContent = document.getElementById('resultContent');
+            resultCard.style.display = 'block';
+            resultContent.innerHTML = '<div class="result-loading"><span class="loading-spinner"></span> 正在查询...</div>';
+
+            // ip-api.com 仅支持IPv4，IPv6 需要使用 ipwhois.app
+            if (isIpv6(ip)) {
+                await queryViaIpwhois(ip, resultContent);
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://ip-api.com/json/${ip}?lang=zh-CN&fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query`);
+                const data = await res.json();
+
+                if (data.status === 'fail') {
+                    resultContent.innerHTML = `<div class="error-msg"><i class="fas fa-exclamation-circle"></i><p>${data.message || '查询失败，请检查IP地址是否正确'}</p></div>`;
+                    return;
+                }
+
+                renderResult(data);
+                addHistory(ip, `${data.country} ${data.regionName} ${data.city}`);
+            } catch {
+                await queryViaIpwhois(ip, resultContent);
+            }
+        }
+
+        // 通过 ipwhois.app 查询（支持IPv4和IPv6）
+        async function queryViaIpwhois(ip, resultContent) {
+            try {
+                const res = await fetch(`https://ipwhois.app/json/${ip}?lang=zh-CN`);
+                const data = await res.json();
+                if (data.success === false) {
+                    resultContent.innerHTML = `<div class="error-msg"><i class="fas fa-exclamation-circle"></i><p>查询失败，请检查IP地址是否正确</p></div>`;
+                    return;
+                }
+                const unified = {
+                    query: data.ip,
+                    country: data.country,
+                    countryCode: data.country_code,
+                    regionName: data.region,
+                    city: data.city,
+                    zip: data.postal,
+                    lat: data.latitude,
+                    lon: data.longitude,
+                    timezone: data.timezone,
+                    isp: data.isp,
+                    org: data.org,
+                    as: data.asn,
+                };
+                renderResult(unified);
+                addHistory(ip, `${unified.country} ${unified.regionName} ${unified.city}`);
+            } catch {
+                resultContent.innerHTML = `<div class="error-msg"><i class="fas fa-exclamation-circle"></i><p>网络请求失败，请稍后重试</p></div>`;
+            }
+        }
+
+        // 渲染结果
+        function renderResult(data) {
+            const resultContent = document.getElementById('resultContent');
+            const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${data.lon-0.05},${data.lat-0.03},${data.lon+0.05},${data.lat+0.03}&layer=mapnik&marker=${data.lat},${data.lon}`;
+
+            resultContent.innerHTML = `
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-network-wired"></i> IP地址</div>
+                        <div class="result-value mono">${data.query}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-flag"></i> 国家/地区</div>
+                        <div class="result-value">${data.country} (${data.countryCode})</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-map-marked-alt"></i> 省份/州</div>
+                        <div class="result-value">${data.regionName || '-'}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-city"></i> 城市</div>
+                        <div class="result-value">${data.city || '-'}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-mail-bulk"></i> 邮编</div>
+                        <div class="result-value mono">${data.zip || '-'}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-clock"></i> 时区</div>
+                        <div class="result-value mono">${data.timezone || '-'}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-server"></i> ISP</div>
+                        <div class="result-value">${data.isp || '-'}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-building"></i> 组织</div>
+                        <div class="result-value">${data.org || '-'}</div>
+                    </div>
+                    <div class="result-item full-width">
+                        <div class="result-label"><i class="fas fa-hashtag"></i> AS编号</div>
+                        <div class="result-value mono">${data.as || '-'}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-map-pin"></i> 经度</div>
+                        <div class="result-value mono">${data.lon}</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label"><i class="fas fa-map-pin"></i> 纬度</div>
+                        <div class="result-value mono">${data.lat}</div>
+                    </div>
+                    <div class="result-item full-width">
+                        <div class="result-label"><i class="fas fa-map"></i> 地理位置</div>
+                        <div class="map-container">
+                            <iframe src="${mapUrl}" allowfullscreen loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 查询入口
+        function queryIp(ip) {
+            if (!ip) return;
+            document.getElementById('ipInput').value = ip;
+            queryIpDetail(ip);
+        }
+
+        function handleSearch() {
+            const ip = document.getElementById('ipInput').value.trim();
+            if (!ip) return;
+            if (!isValidIp(ip)) {
+                const resultCard = document.getElementById('resultCard');
+                const resultContent = document.getElementById('resultContent');
+                resultCard.style.display = 'block';
+                resultContent.innerHTML = `<div class="error-msg"><i class="fas fa-exclamation-circle"></i><p>请输入有效的IPv4或IPv6地址</p></div>`;
+                return;
+            }
+            queryIpDetail(ip);
+        }
+
+        // 回车搜索
+        document.getElementById('ipInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleSearch();
+        });
+
+        // 复制我的IP
+        function copyMyIp() {
+            const ip = document.getElementById('myIpValue').dataset.ip;
+            if (!ip) return;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(ip).catch(() => fallbackCopy(ip));
+            } else {
+                fallbackCopy(ip);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta);
+        }
+
+        // 历史记录
+        function addHistory(ip, location) {
+            queryHistory = queryHistory.filter(h => h.ip !== ip);
+            queryHistory.unshift({ ip, location, time: new Date().toLocaleString('zh-CN') });
+            queryHistory = queryHistory.slice(0, 15);
+            localStorage.setItem('ipQueryHistory', JSON.stringify(queryHistory));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            if (!queryHistory.length) return;
+            const card = document.getElementById('historyCard');
+            const list = document.getElementById('historyList');
+            card.style.display = 'block';
+            list.innerHTML = queryHistory.map(h => `
+                <div class="history-item" onclick="queryIp('${h.ip}')">
+                    <div>
+                        <span class="ip-text">${h.ip}</span>
+                        <span class="ip-location"> — ${h.location}</span>
+                    </div>
+                    <span class="ip-time">${h.time}</span>
+                </div>
+            `).join('');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof ComponentLoader !== 'undefined') {
+                ComponentLoader.initPage({
+                    loadHeader: true, loadFooter: true,
+                    headerTarget: 'header-container', footerTarget: 'footer-container',
+                    activeNav: 'tools', basePath: '../components/', toolName: 'IP地址查询'
+                });
+            }
+            fetchMyIp();
+            renderHistory();
+        });
+    </script>
+</body>
+</html>

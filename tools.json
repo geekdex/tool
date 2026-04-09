@@ -105,7 +105,7 @@
     "description": "查询IP地址的地理位置信息，包括国家、城市、ISP和经纬度等。",
     "icon": "fas fa-globe",
     "iconColor": "#2a9d8f",
-    "link": "https://www.ip138.com/",
+    "link": "/ip",
     "tags": ["网络", "工具", "查询"],
     "category": "development"
   },
