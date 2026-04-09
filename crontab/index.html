@@ -11,9 +11,9 @@
 
         /* 表达式显示 */
         .expr-display {
-            background: linear-gradient(145deg, #1e1e2e, #181825); color: #cdd6f4; padding: 22px 28px; border-radius: 14px;
-            font-family: 'Consolas', 'Fira Code', monospace; font-size: 1.7rem; text-align: center;
-            letter-spacing: 6px; margin-bottom: 12px; position: relative;
+            background: linear-gradient(145deg, #1e1e2e, #181825); color: #cdd6f4; padding: 16px 20px; border-radius: 12px;
+            font-family: 'Consolas', 'Fira Code', monospace; font-size: 1.4rem; text-align: center;
+            letter-spacing: 4px; margin-bottom: 10px; position: relative;
             box-shadow: 0 8px 24px rgba(30,30,46,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
         }
         .expr-display .field-sep { color: #45475a; }
@@ -29,22 +29,22 @@
         }
         .expr-copy:hover { background: rgba(255,255,255,0.15); color: #cdd6f4; }
         .expr-desc {
-            text-align: center; font-size: 1rem; color: var(--dark-color); font-weight: 500;
-            padding: 14px 16px; background: linear-gradient(135deg, rgba(67,97,238,0.04), rgba(72,149,239,0.06));
-            border-radius: 10px; border: 1px solid rgba(67,97,238,0.08);
+            text-align: center; font-size: 0.92rem; color: var(--dark-color); font-weight: 500;
+            padding: 10px 14px; background: linear-gradient(135deg, rgba(67,97,238,0.04), rgba(72,149,239,0.06));
+            border-radius: 8px; border: 1px solid rgba(67,97,238,0.08);
         }
 
         /* 字段编辑 */
         .field-row {
-            display: grid; grid-template-columns: 70px 1fr; gap: 14px; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid #f5f6f8;
+            display: grid; grid-template-columns: 70px 1fr; gap: 10px; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid #f5f6f8;
         }
         .field-row:last-child { border-bottom: none; }
         .field-label { font-weight: 700; color: var(--dark-color); font-size: 0.88rem; }
         .field-hint { font-size: 0.72rem; color: var(--gray-color); margin-top: 2px; }
         .field-input {
-            padding: 10px 14px; border: 1.5px solid #e9ecef; border-radius: 10px;
-            font-family: 'Consolas', 'Fira Code', monospace; font-size: 0.95rem; font-weight: 600;
+            padding: 8px 12px; border: 1.5px solid #e9ecef; border-radius: 8px;
+            font-family: 'Consolas', 'Fira Code', monospace; font-size: 0.9rem; font-weight: 600;
             background: #f8f9fb; transition: var(--transition);
         }
         .field-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08); background: white; }
@@ -52,8 +52,8 @@
         /* 预设 */
         .presets-grid { display: flex; gap: 8px; flex-wrap: wrap; }
         .preset-chip {
-            padding: 8px 16px; border: 1.5px solid #eef0f4; border-radius: 50px; cursor: pointer;
-            font-size: 0.8rem; background: white; transition: var(--transition); color: #555;
+            padding: 6px 14px; border: 1.5px solid #eef0f4; border-radius: 50px; cursor: pointer;
+            font-size: 0.78rem; background: white; transition: var(--transition); color: #555;
             font-weight: 500;
         }
         .preset-chip:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(67,97,238,0.03); transform: translateY(-1px); }
@@ -62,9 +62,9 @@
         /* 执行时间 */
         .next-times { list-style: none; }
         .next-times li {
-            padding: 12px 16px; background: #f8f9fb; border-radius: 10px; margin-bottom: 6px;
-            display: flex; align-items: center; gap: 12px; font-family: 'Consolas', monospace;
-            font-size: 0.88rem; border: 1px solid #eef0f4; transition: var(--transition);
+            padding: 10px 14px; background: #f8f9fb; border-radius: 8px; margin-bottom: 5px;
+            display: flex; align-items: center; gap: 10px; font-family: 'Consolas', monospace;
+            font-size: 0.84rem; border: 1px solid #eef0f4; transition: var(--transition);
         }
         .next-times li:hover { border-color: rgba(67,97,238,0.2); background: rgba(67,97,238,0.02); }
         .next-times li i { color: var(--primary-color); font-size: 0.85rem; }
@@ -74,7 +74,7 @@
 
         @media (max-width: 768px) {
             .field-row { grid-template-columns: 60px 1fr; }
-            .expr-display { font-size: 1.2rem; letter-spacing: 3px; padding: 16px 18px; }
+            .expr-display { font-size: 1.1rem; letter-spacing: 3px; padding: 12px 14px; }
         }
     </style>
 </head>

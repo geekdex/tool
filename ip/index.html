@@ -10,26 +10,26 @@
     <style>
         /* 搜索区 */
         .ip-search {
-            display: flex; gap: 12px; margin-bottom: 24px;
+            display: flex; gap: 10px; margin-bottom: 18px;
         }
         .ip-search .tool-input {
-            flex: 1; font-size: 1.05rem; padding: 12px 16px;
+            flex: 1; font-size: 0.95rem; padding: 8px 12px;
             font-family: 'Consolas', 'Monaco', monospace;
         }
         .ip-search .tool-btn-primary {
-            padding: 12px 28px; font-size: 0.95rem; white-space: nowrap;
+            padding: 8px 20px; font-size: 0.9rem; white-space: nowrap;
         }
 
         /* 我的IP卡片 */
         .my-ip-card {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            border-radius: 14px; padding: 28px 30px; color: white; margin-bottom: 24px;
+            border-radius: 12px; padding: 20px 22px; color: white; margin-bottom: 18px;
             display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 8px 24px rgba(67,97,238,0.25);
+            box-shadow: 0 6px 18px rgba(67,97,238,0.25);
         }
         .my-ip-label { font-size: 0.9rem; opacity: 0.85; margin-bottom: 6px; }
         .my-ip-value {
-            font-size: 2rem; font-weight: 700; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1.6rem; font-weight: 700; font-family: 'Consolas', 'Monaco', monospace;
             letter-spacing: 1px;
         }
         .my-ip-actions { display: flex; gap: 10px; }
@@ -40,10 +40,10 @@
 
         /* 结果表格 */
         .result-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
         }
         .result-item {
-            background: #f8f9fb; border-radius: 12px; padding: 18px 20px;
+            background: #f8f9fb; border-radius: 10px; padding: 14px 16px;
             border: 1px solid #eef0f4; transition: var(--transition);
         }
         .result-item:hover { border-color: var(--primary-color); background: rgba(67,97,238,0.02); }
@@ -54,7 +54,7 @@
         }
         .result-label i { font-size: 0.78rem; }
         .result-value {
-            font-size: 1.05rem; color: var(--dark-color); font-weight: 600; word-break: break-all;
+            font-size: 0.95rem; color: var(--dark-color); font-weight: 600; word-break: break-all;
         }
         .result-value.mono {
             font-family: 'Consolas', 'Monaco', monospace; font-size: 1rem;
@@ -62,7 +62,7 @@
 
         /* 地图占位 */
         .map-container {
-            background: #f0f2f6; border-radius: 12px; height: 220px;
+            background: #f0f2f6; border-radius: 10px; height: 180px;
             display: flex; align-items: center; justify-content: center;
             color: var(--gray-color); font-size: 0.95rem; margin-top: 8px;
             overflow: hidden; position: relative;
@@ -97,8 +97,8 @@
         /* 历史记录 */
         .history-item {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 16px; background: #f8f9fb; border-radius: 10px;
-            margin-bottom: 8px; border: 1px solid #eef0f4; cursor: pointer;
+            padding: 10px 14px; background: #f8f9fb; border-radius: 8px;
+            margin-bottom: 6px; border: 1px solid #eef0f4; cursor: pointer;
             transition: var(--transition);
         }
         .history-item:hover { border-color: var(--primary-color); background: rgba(67,97,238,0.02); }
@@ -113,7 +113,7 @@
             .ip-search { flex-direction: column; }
             .result-grid { grid-template-columns: 1fr; }
             .my-ip-card { flex-direction: column; text-align: center; gap: 16px; }
-            .my-ip-value { font-size: 1.5rem; }
+            .my-ip-value { font-size: 1.3rem; }
         }
     </style>
 </head>

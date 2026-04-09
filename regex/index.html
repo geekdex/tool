@@ -10,17 +10,17 @@
     <style>
 
         /* 正则输入 */
-        .regex-input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+        .regex-input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
         .regex-input {
-            flex: 1; min-width: 200px; padding: 14px 18px; border: 2px solid #e9ecef;
-            border-radius: 12px; font-family: 'Consolas', 'Fira Code', monospace; font-size: 1.15rem;
+            flex: 1; min-width: 200px; padding: 10px 14px; border: 2px solid #e9ecef;
+            border-radius: 10px; font-family: 'Consolas', 'Fira Code', monospace; font-size: 1rem;
             font-weight: 600; letter-spacing: 1px; background: #f8f9fb; transition: var(--transition);
         }
         .regex-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(67,97,238,0.08); background: white; }
         .flags { display: flex; gap: 5px; }
         .flag-btn {
-            width: 38px; height: 38px; border: 2px solid #e9ecef; border-radius: 10px; cursor: pointer;
-            font-family: 'Consolas', monospace; font-size: 0.9rem; font-weight: 700; background: white;
+            width: 34px; height: 34px; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer;
+            font-family: 'Consolas', monospace; font-size: 0.85rem; font-weight: 700; background: white;
             transition: var(--transition); display: flex; align-items: center; justify-content: center; color: #888;
         }
         .flag-btn.active {
@@ -32,17 +32,17 @@
 
         /* 测试文本 */
         .test-textarea {
-            width: 100%; min-height: 120px; padding: 16px; border: 1.5px solid #e9ecef;
-            border-radius: 10px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.92rem;
-            resize: vertical; line-height: 1.8; transition: var(--transition); background: #fdfdfe;
+            width: 100%; min-height: 100px; padding: 12px; border: 1.5px solid #e9ecef;
+            border-radius: 8px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.88rem;
+            resize: vertical; line-height: 1.7; transition: var(--transition); background: #fdfdfe;
         }
         .test-textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08); }
 
         /* 匹配高亮 */
         .match-result {
-            padding: 16px; min-height: 64px; background: #fdfdfe; border: 1.5px solid #e9ecef;
-            border-radius: 10px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.92rem;
-            line-height: 1.8; white-space: pre-wrap; word-break: break-all;
+            padding: 12px; min-height: 50px; background: #fdfdfe; border: 1.5px solid #e9ecef;
+            border-radius: 8px; font-family: 'Consolas', 'Monaco', monospace; font-size: 0.88rem;
+            line-height: 1.7; white-space: pre-wrap; word-break: break-all;
         }
         .match-highlight { background: rgba(67, 97, 238, 0.2); border-radius: 3px; padding: 1px 0; border-bottom: 2px solid var(--primary-color); }
         .match-group-1 { background: rgba(255, 159, 0, 0.2); border-bottom-color: #ff9e00; }
@@ -52,15 +52,15 @@
         .error-msg { color: #ef4444; font-size: 0.82rem; margin-top: 10px; font-weight: 500; }
 
         /* 匹配详情 */
-        .match-info { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+        .match-info { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
         .match-count { font-weight: 700; color: var(--primary-color); font-size: 0.95rem; }
         .match-count.has-matches { color: #22c55e; }
         .match-table { width: 100%; border-collapse: collapse; margin-top: 14px; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
         .match-table th {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            color: white; padding: 10px 14px; text-align: left; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.3px;
+            color: white; padding: 8px 12px; text-align: left; font-size: 0.76rem; font-weight: 600; letter-spacing: 0.3px;
         }
-        .match-table td { padding: 8px 14px; border-bottom: 1px solid #f3f4f6; font-family: 'Consolas', monospace; font-size: 0.82rem; }
+        .match-table td { padding: 6px 12px; border-bottom: 1px solid #f3f4f6; font-family: 'Consolas', monospace; font-size: 0.8rem; }
         .match-table tr:nth-child(even) { background: #f8f9fb; }
         .match-table tr:hover { background: rgba(67,97,238,0.03); }
         .match-badge {
@@ -71,8 +71,8 @@
         /* 示例 */
         .examples-grid { display: flex; gap: 8px; flex-wrap: wrap; }
         .example-chip {
-            padding: 7px 16px; border: 1.5px solid #eef0f4; border-radius: 50px; cursor: pointer;
-            font-size: 0.78rem; background: white; transition: var(--transition); color: #666; font-weight: 500;
+            padding: 5px 14px; border: 1.5px solid #eef0f4; border-radius: 50px; cursor: pointer;
+            font-size: 0.76rem; background: white; transition: var(--transition); color: #666; font-weight: 500;
         }
         .example-chip:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(67,97,238,0.03); transform: translateY(-1px); }
 

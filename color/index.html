@@ -10,12 +10,12 @@
     <style>
         /* 颜色选择区 */
         .picker-area {
-            display: flex; gap: 36px; align-items: center; flex-wrap: wrap;
-            padding: 8px 0;
+            display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+            padding: 6px 0;
         }
         .color-preview-wrap { position: relative; flex-shrink: 0; }
         .color-preview {
-            width: 140px; height: 140px; border-radius: 20px; border: none;
+            width: 120px; height: 120px; border-radius: 16px; border: none;
             cursor: pointer; position: relative; overflow: hidden;
             transition: transform 0.25s ease, box-shadow 0.25s ease;
             box-shadow: 0 8px 24px rgba(0,0,0,0.12);
@@ -26,10 +26,10 @@
             cursor: pointer; border: none; padding: 0;
         }
         .picker-info { flex: 1; min-width: 220px; }
-        .hex-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .hex-input-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
         .hex-input {
-            flex: 1; padding: 12px 16px; border: 2px solid #e9ecef; border-radius: 12px;
-            font-size: 1.2rem; font-family: 'Consolas', monospace; font-weight: 700;
+            flex: 1; padding: 8px 12px; border: 2px solid #e9ecef; border-radius: 10px;
+            font-size: 1.05rem; font-family: 'Consolas', monospace; font-weight: 700;
             letter-spacing: 2px; transition: var(--transition); background: #f8f9fb;
         }
         .hex-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(67,97,238,0.08); background: white; }
@@ -48,7 +48,7 @@
 
         /* 颜色格式 */
         .format-row {
-            display: flex; align-items: center; justify-content: space-between; padding: 12px 0;
+            display: flex; align-items: center; justify-content: space-between; padding: 10px 0;
             border-bottom: 1px solid #f5f6f8;
         }
         .format-row:last-child { border-bottom: none; }
@@ -62,10 +62,10 @@
         }
 
         /* 配色方案 */
-        .scheme-tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+        .scheme-tabs { display: flex; gap: 5px; margin-bottom: 14px; flex-wrap: wrap; }
         .scheme-tab {
-            padding: 8px 18px; border: 2px solid #eef0f4; border-radius: 50px; cursor: pointer;
-            font-size: 0.82rem; font-weight: 600; background: white; transition: var(--transition);
+            padding: 6px 14px; border: 2px solid #eef0f4; border-radius: 50px; cursor: pointer;
+            font-size: 0.78rem; font-weight: 600; background: white; transition: var(--transition);
             color: #666;
         }
         .scheme-tab.active {
@@ -73,9 +73,9 @@
             box-shadow: 0 2px 8px rgba(67,97,238,0.12);
         }
         .scheme-tab:hover:not(.active) { border-color: var(--primary-light); color: var(--primary-color); }
-        .scheme-colors { display: flex; gap: 12px; flex-wrap: wrap; }
+        .scheme-colors { display: flex; gap: 10px; flex-wrap: wrap; }
         .scheme-swatch {
-            width: 76px; height: 76px; border-radius: 16px; cursor: pointer;
+            width: 64px; height: 64px; border-radius: 14px; cursor: pointer;
             transition: transform 0.25s ease, box-shadow 0.25s ease; border: none;
             display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px;
             font-size: 0.62rem; font-family: 'Consolas', monospace; color: white;
@@ -86,17 +86,17 @@
 
         /* 对比度检查 */
         .contrast-row {
-            display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
-            padding: 12px 0;
+            display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+            padding: 10px 0;
         }
         .contrast-preview {
-            width: 110px; height: 70px; border-radius: 14px; display: flex;
-            align-items: center; justify-content: center; font-weight: 600; font-size: 0.95rem;
+            width: 90px; height: 56px; border-radius: 10px; display: flex;
+            align-items: center; justify-content: center; font-weight: 600; font-size: 0.88rem;
             border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             transition: transform 0.2s;
         }
         .contrast-preview:hover { transform: scale(1.04); }
-        .contrast-result { font-size: 1.3rem; font-weight: 700; color: var(--dark-color); }
+        .contrast-result { font-size: 1.15rem; font-weight: 700; color: var(--dark-color); }
         .contrast-badge {
             display: inline-block; padding: 5px 14px; border-radius: 50px; font-size: 0.78rem;
             font-weight: 600; margin-top: 4px; letter-spacing: 0.3px;

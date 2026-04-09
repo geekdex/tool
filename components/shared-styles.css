@@ -287,21 +287,21 @@ footer {
 
 /* 工具页面通用布局 */
 main.tool-main {
-    padding: 40px 0;
+    padding: 24px 0;
 }
 
 .tool-page-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: var(--dark-color);
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .tool-page-subtitle {
     color: var(--gray-color);
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 1rem;
+    margin-bottom: 18px;
+    font-size: 0.95rem;
 }
 
 /* 工具内容区 - 标准宽度 */
@@ -320,9 +320,9 @@ main.tool-main {
 .tool-card {
     background: white;
     border-radius: 14px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(0,0,0,0.03);
@@ -337,19 +337,19 @@ main.tool-main {
 }
 
 .tool-card-title {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--dark-color);
-    margin-bottom: 20px;
+    margin-bottom: 14px;
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .tool-card-title::before {
     content: '';
-    width: 4px;
-    height: 18px;
+    width: 3px;
+    height: 14px;
     background: linear-gradient(180deg, var(--primary-color), var(--primary-light));
     border-radius: 2px;
 }
@@ -435,38 +435,38 @@ main.tool-main {
 @media (max-width: 768px) {
     .header-container {
         flex-direction: column;
-        gap: 20px;
+        gap: 12px;
     }
 
     nav ul {
         flex-wrap: wrap;
         justify-content: center;
-        gap: 20px;
+        gap: 15px;
     }
 
     .tool-page-title {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
 
     .tool-page-subtitle {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
     main {
-        padding: 20px 0;
+        padding: 16px 0;
     }
 
     .tool-card {
-        padding: 20px;
+        padding: 14px;
     }
 
     .footer-content {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 20px;
     }
 
     footer {
-        padding: 40px 0 20px;
+        padding: 30px 0 15px;
     }
 
     .footer-simple {
@@ -507,19 +507,19 @@ main.tool-main {
     }
 
     footer {
-        padding: 40px 0 20px;
+        padding: 30px 0 15px;
     }
 
     .footer-section h3 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .tool-page-title {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 
     .tool-card {
-        padding: 16px;
+        padding: 12px;
         border-radius: 8px;
     }
 }

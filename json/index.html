@@ -10,8 +10,8 @@
     <style>
         /* 工具栏 */
         .toolbar {
-            display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
-            padding: 12px 16px; background: #f8f9fb; border-radius: 10px; border: 1px solid #eef0f4;
+            display: flex; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;
+            padding: 8px 12px; background: #f8f9fb; border-radius: 10px; border: 1px solid #eef0f4;
         }
         .toolbar .tool-btn { border-radius: 8px; }
         .toolbar .tool-btn-primary {
@@ -29,18 +29,18 @@
         .indent-select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08); }
 
         /* 编辑区 */
-        .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .editor-panel { display: flex; flex-direction: column; }
         .editor-label {
-            font-weight: 600; color: var(--dark-color); margin-bottom: 8px; font-size: 0.82rem;
+            font-weight: 600; color: var(--dark-color); margin-bottom: 6px; font-size: 0.78rem;
             text-transform: uppercase; letter-spacing: 0.5px;
-            display: flex; align-items: center; gap: 6px;
+            display: flex; align-items: center; gap: 5px;
         }
-        .editor-label i { font-size: 0.75rem; color: var(--primary-color); }
+        .editor-label i { font-size: 0.7rem; color: var(--primary-color); }
         .json-input, .json-output {
-            width: 100%; min-height: 420px; padding: 16px; border: 1px solid #e9ecef;
+            width: 100%; min-height: 350px; padding: 12px; border: 1px solid #e9ecef;
             border-radius: 10px; font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
-            font-size: 0.85rem; resize: vertical; line-height: 1.7; transition: border-color 0.2s, box-shadow 0.2s;
+            font-size: 0.82rem; resize: vertical; line-height: 1.6; transition: border-color 0.2s, box-shadow 0.2s;
         }
         .json-input {
             background: #fdfdfe;
@@ -78,8 +78,8 @@
 
         /* 状态栏 */
         .status-bar {
-            display: flex; justify-content: space-between; align-items: center; padding: 12px 4px;
-            margin-top: 8px; font-size: 0.82rem;
+            display: flex; justify-content: space-between; align-items: center; padding: 8px 4px;
+            margin-top: 6px; font-size: 0.78rem;
         }
         .status-valid { color: #22c55e; font-weight: 500; }
         .status-invalid { color: #ef4444; font-weight: 500; }
@@ -159,7 +159,7 @@
                 { "id": 1, "name": "时间戳转换", "category": "time", "active": true },
                 { "id": 2, "name": "JSON格式化", "category": "development", "active": true }
             ],
-            "author": { "name": "xiaoqi", "email": "admin@tekio.cn" },
+            "author": { "name": "xiaoqi", "email": "pan.hy@foxmail.com" },
             "config": { "theme": "light", "language": "zh-CN", "maxTools": 50 },
             "tags": ["工具", "开发", "效率", "在线"],
             "stats": null

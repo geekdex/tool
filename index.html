@@ -156,16 +156,16 @@
 
         /* 英雄区域 */
         .hero {
-            padding: 80px 0 60px;
+            padding: 40px 0 30px;
             text-align: center;
             max-width: 900px;
             margin: 0 auto;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 2.2rem;
             font-weight: 800;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
             -webkit-background-clip: text;
             background-clip: text;
@@ -174,9 +174,9 @@
         }
 
         .hero p {
-            font-size: 1.3rem;
+            font-size: 1.05rem;
             color: var(--gray-color);
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
@@ -184,17 +184,17 @@
 
         .search-box {
             max-width: 600px;
-            margin: 0 auto 50px;
+            margin: 0 auto 30px;
             position: relative;
         }
 
         .search-box input {
             width: 100%;
-            padding: 18px 25px;
-            padding-left: 60px;
+            padding: 12px 20px;
+            padding-left: 48px;
             border: none;
             border-radius: 50px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             box-shadow: var(--box-shadow);
             transition: var(--transition);
         }
@@ -206,11 +206,11 @@
 
         .search-box i {
             position: absolute;
-            left: 25px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--primary-color);
-            font-size: 1.3rem;
+            font-size: 1.1rem;
         }
 
         /* 工具分类 */
@@ -218,12 +218,12 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 50px;
+            gap: 10px;
+            margin-bottom: 30px;
         }
 
         .category-btn {
-            padding: 12px 25px;
+            padding: 8px 20px;
             background-color: white;
             border: none;
             border-radius: 50px;
@@ -247,18 +247,18 @@
 
         /* 工具网格 */
         .tools-section {
-            margin-bottom: 80px;
+            margin-bottom: 40px;
         }
 
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 35px;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 2.2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--dark-color);
         }
@@ -280,14 +280,14 @@
 
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
         }
 
         .tool-card {
             background-color: white;
             border-radius: var(--border-radius);
-            padding: 30px;
+            padding: 18px;
             box-shadow: var(--box-shadow);
             transition: var(--transition);
             display: flex;
@@ -304,67 +304,69 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 3px;
             background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
         }
 
         .tool-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-5px);
             box-shadow: var(--box-shadow-hover);
         }
 
         .tool-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 18px;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 25px;
-            font-size: 1.8rem;
+            margin-bottom: 14px;
+            font-size: 1.3rem;
             color: white;
         }
 
         .tool-card h3 {
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
 
         .tool-card p {
             color: var(--gray-color);
-            margin-bottom: 25px;
+            margin-bottom: 12px;
             flex-grow: 1;
-            line-height: 1.7;
+            line-height: 1.5;
+            font-size: 0.9rem;
         }
 
         .tool-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 25px;
+            gap: 6px;
+            margin-bottom: 14px;
         }
 
         .tool-tag {
             background-color: rgba(67, 97, 238, 0.1);
             color: var(--primary-color);
-            padding: 6px 14px;
+            padding: 3px 10px;
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: 600;
         }
 
         .tool-link {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 25px;
+            gap: 8px;
+            padding: 8px 18px;
             background-color: var(--primary-color);
             color: white;
             text-decoration: none;
             border-radius: 50px;
             font-weight: 600;
+            font-size: 0.9rem;
             transition: var(--transition);
             justify-content: center;
             margin-top: auto;
@@ -379,12 +381,12 @@
         .featured-tool {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             border-radius: var(--border-radius);
-            padding: 60px;
-            margin-bottom: 80px;
+            padding: 30px 40px;
+            margin-bottom: 40px;
             color: white;
             display: flex;
             align-items: center;
-            gap: 60px;
+            gap: 40px;
             box-shadow: var(--box-shadow);
         }
 
@@ -393,29 +395,29 @@
         }
 
         .featured-content h2 {
-            font-size: 2.5rem;
+            font-size: 1.6rem;
             font-weight: 800;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .featured-content p {
-            font-size: 1.2rem;
+            font-size: 1rem;
             opacity: 0.9;
-            margin-bottom: 30px;
-            line-height: 1.7;
+            margin-bottom: 18px;
+            line-height: 1.6;
         }
 
         .featured-link {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            padding: 16px 35px;
+            gap: 10px;
+            padding: 10px 24px;
             background-color: white;
             color: var(--primary-color);
             text-decoration: none;
             border-radius: 50px;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: var(--transition);
         }
 
@@ -427,7 +429,7 @@
         .featured-image {
             flex: 1;
             text-align: center;
-            font-size: 12rem;
+            font-size: 8rem;
             opacity: 0.9;
         }
 
@@ -435,15 +437,15 @@
         footer {
             background-color: var(--dark-color);
             color: white;
-            padding: 40px 0 25px;
-            margin-top: 50px;
+            padding: 30px 0 20px;
+            margin-top: 30px;
         }
 
         .footer-simple {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
             gap: 20px;
         }
@@ -496,59 +498,59 @@
 
         .copyright {
             text-align: center;
-            padding-top: 20px;
+            padding-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: #888;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         /* 响应式设计 */
         @media (max-width: 992px) {
             .featured-tool {
                 flex-direction: column;
-                gap: 40px;
+                gap: 20px;
                 text-align: center;
             }
 
             .hero h1 {
-                font-size: 2.8rem;
+                font-size: 1.8rem;
             }
         }
 
         @media (max-width: 768px) {
             .header-container {
                 flex-direction: column;
-                gap: 20px;
+                gap: 12px;
             }
 
             nav ul {
                 flex-wrap: wrap;
                 justify-content: center;
-                gap: 20px;
+                gap: 15px;
             }
 
             .hero h1 {
-                font-size: 2.2rem;
+                font-size: 1.5rem;
             }
 
             .hero p {
-                font-size: 1.1rem;
+                font-size: 0.95rem;
             }
 
             .tools-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             }
 
             .featured-tool {
-                padding: 40px 30px;
+                padding: 24px 20px;
             }
 
             .featured-content h2 {
-                font-size: 2rem;
+                font-size: 1.3rem;
             }
 
             .featured-image {
-                font-size: 8rem;
+                font-size: 5rem;
             }
 
             .footer-simple {
@@ -718,7 +720,7 @@
                 // 检查是否有本地存储的额外工具
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 if (isLocal) {
-                    const localTools = JSON.parse(localStorage.getItem('tekio_local_tools') || '[]');
+                    const localTools = JSON.parse(localStorage.getItem('devtool_local_tools') || '[]');
                     // 合并数据，确保本地工具在后面（避免ID冲突）
                     const maxId = jsonData.length > 0 ? Math.max(...jsonData.map(t => t.id)) : 0;
                     localTools.forEach((tool, index) => {
@@ -877,7 +879,7 @@
         function saveToolToLocalStorage(tool) {
             try {
                 // 获取现有的本地工具
-                const localTools = JSON.parse(localStorage.getItem('tekio_local_tools') || '[]');
+                const localTools = JSON.parse(localStorage.getItem('devtool_local_tools') || '[]');
                 
                 // 确保工具有唯一的ID（避免与JSON文件中的ID冲突）
                 const jsonData = toolsData.filter(t => !localTools.some(lt => lt.tempId === t.tempId));
@@ -889,7 +891,7 @@
                 localTools.push(tool);
                 
                 // 保存回localStorage
-                localStorage.setItem('tekio_local_tools', JSON.stringify(localTools));
+                localStorage.setItem('devtool_local_tools', JSON.stringify(localTools));
                 console.log('工具已保存到本地存储:', tool);
                 
                 // 显示成功消息
