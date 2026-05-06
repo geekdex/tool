@@ -29,18 +29,43 @@
         .indent-select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08); }
 
         /* 编辑区 */
-        .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .editor-panel { display: flex; flex-direction: column; }
-        .editor-label {
-            font-weight: 600; color: var(--dark-color); margin-bottom: 6px; font-size: 0.78rem;
-            text-transform: uppercase; letter-spacing: 0.5px;
-            display: flex; align-items: center; gap: 5px;
+        .editor-grid { display: flex; flex-direction: column; gap: 12px; }
+        .editor-panel {
+            display: flex; flex-direction: column;
+            border: 1px solid #e9ecef; border-radius: 10px; overflow: hidden;
+            transition: box-shadow 0.2s;
         }
-        .editor-label i { font-size: 0.7rem; color: var(--primary-color); }
+        .editor-panel:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; background: #f8f9fb; cursor: pointer; user-select: none;
+            border-bottom: 1px solid #e9ecef; transition: background 0.15s;
+        }
+        .panel-header:hover { background: #f0f2f6; }
+        .panel-header-left {
+            display: flex; align-items: center; gap: 8px;
+            font-weight: 600; color: var(--dark-color); font-size: 0.78rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .panel-header-left i { font-size: 0.7rem; color: var(--primary-color); }
+        .panel-toggle {
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            border: none; background: transparent; color: #999; cursor: pointer;
+            border-radius: 6px; transition: all 0.2s; font-size: 0.7rem;
+        }
+        .panel-toggle:hover { background: #e9ecef; color: #555; }
+        .panel-body {
+            overflow: hidden; transition: max-height 0.3s ease, opacity 0.25s ease;
+            max-height: 600px; opacity: 1;
+        }
+        .panel-body.collapsed { max-height: 0; opacity: 0; }
+        .panel-body.scrollable { overflow: auto; }
+        .panel-header .fa-chevron-up { transition: transform 0.3s ease; }
+        .editor-panel.collapsed .panel-header .fa-chevron-up { transform: rotate(180deg); }
         .json-input, .json-output {
-            width: 100%; min-height: 350px; padding: 12px; border: 1px solid #e9ecef;
-            border-radius: 10px; font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
-            font-size: 0.82rem; resize: vertical; line-height: 1.6; transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%; min-height: 300px; padding: 12px; border: none;
+            font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
+            font-size: 0.82rem; resize: vertical; line-height: 1.6;
         }
         .json-input {
             background: #fdfdfe;
@@ -49,12 +74,25 @@
             );
             background-attachment: local;
         }
-        .json-input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08), 0 4px 12px rgba(67,97,238,0.06); }
+        .json-input:focus { outline: none; background: #fff; }
         .json-output {
             background: linear-gradient(145deg, #1e1e2e, #181825); color: #cdd6f4; overflow: auto;
-            white-space: pre-wrap; word-break: break-all; border: none;
+            white-space: pre-wrap; word-break: break-all;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
         }
+
+        /* 拖拽调整手柄 */
+        .resize-handle {
+            height: 5px; cursor: ns-resize; background: #2a2a3c; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s; flex-shrink: 0;
+        }
+        .resize-handle:hover, .resize-handle.active { background: var(--primary-color); }
+        .resize-handle::after {
+            content: ''; width: 40px; height: 3px; border-radius: 2px;
+            background: #555; transition: background 0.15s;
+        }
+        .resize-handle:hover::after, .resize-handle.active::after { background: rgba(255,255,255,0.7); }
 
         /* 语法高亮 */
         .json-key { color: #89b4fa; }
@@ -86,7 +124,7 @@
         .status-info { color: var(--gray-color); }
 
         /* 视图切换 */
-        .view-tabs { display: flex; gap: 2px; margin-bottom: 10px; background: #f0f2f6; border-radius: 8px; padding: 3px; }
+        .view-tabs { display: flex; gap: 2px; background: #f0f2f6; border-radius: 8px; padding: 3px; }
         .view-tab {
             padding: 5px 14px; border: none; border-radius: 6px; cursor: pointer;
             font-size: 0.78rem; font-weight: 500; background: transparent; transition: var(--transition);
@@ -96,8 +134,7 @@
         .view-tab:hover:not(.active) { color: #333; }
 
         @media (max-width: 768px) {
-            .editor-grid { grid-template-columns: 1fr; }
-            .json-input, .json-output { min-height: 250px; }
+            .json-input, .json-output { min-height: 200px; }
         }
     </style>
 </head>
@@ -106,7 +143,7 @@
     <main class="container tool-main">
         <h1 class="tool-page-title"><i class="fas fa-code" style="color:#ff9e00;"></i> JSON格式化</h1>
         <p class="tool-page-subtitle">格式化、验证、压缩 JSON 数据，支持语法高亮与树形视图</p>
-        <div class="tool-content-wide">
+        <div class="tool-content">
         <div class="tool-card">
             <div class="toolbar">
                 <button class="tool-btn tool-btn-primary" id="formatBtn"><i class="fas fa-magic"></i> 格式化</button>
@@ -122,19 +159,30 @@
             </div>
 
             <div class="editor-grid">
-                <div class="editor-panel">
-                    <div class="editor-label"><i class="fas fa-edit"></i> 输入 JSON</div>
-                    <textarea class="json-input" id="jsonInput" placeholder="在此粘贴 JSON 数据..." spellcheck="false"></textarea>
+                <div class="editor-panel" id="inputPanel">
+                    <div class="panel-header" onclick="togglePanel('inputPanel')">
+                        <div class="panel-header-left"><i class="fas fa-edit"></i> 输入 JSON</div>
+                        <button class="panel-toggle"><i class="fas fa-chevron-up"></i></button>
+                    </div>
+                    <div class="panel-body" id="inputBody">
+                        <textarea class="json-input" id="jsonInput" placeholder="在此粘贴 JSON 数据..." spellcheck="false"></textarea>
+                    </div>
                 </div>
-                <div class="editor-panel">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <div class="editor-label"><i class="fas fa-eye"></i> 输出结果</div>
-                        <div class="view-tabs">
-                            <div class="view-tab active" data-view="code">代码</div>
-                            <div class="view-tab" data-view="tree">树形</div>
+                <div class="editor-panel" id="outputPanel">
+                    <div class="panel-header" onclick="togglePanel('outputPanel')">
+                        <div class="panel-header-left"><i class="fas fa-eye"></i> 输出结果</div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div class="view-tabs" onclick="event.stopPropagation()">
+                                <div class="view-tab active" data-view="code">代码</div>
+                                <div class="view-tab" data-view="tree">树形</div>
+                            </div>
+                            <button class="panel-toggle"><i class="fas fa-chevron-up"></i></button>
                         </div>
                     </div>
-                    <div class="json-output" id="jsonOutput"><span style="color:#6c7086;">格式化结果将显示在这里</span></div>
+                    <div class="panel-body scrollable" id="outputBody">
+                        <div class="json-output" id="jsonOutput"><span style="color:#6c7086;">格式化结果将显示在这里</span></div>
+                    </div>
+                    <div class="resize-handle" id="outputResizeHandle"></div>
                 </div>
             </div>
 
@@ -164,6 +212,11 @@
             "tags": ["工具", "开发", "效率", "在线"],
             "stats": null
         };
+
+        function resetOutputHeight() {
+            const body = document.getElementById('outputBody');
+            body.style.maxHeight = '';
+        }
 
         function getIndent() {
             const v = document.getElementById('indentSelect').value;
@@ -211,6 +264,19 @@
             return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
 
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            const body = panel.querySelector('.panel-body');
+            panel.classList.toggle('collapsed');
+            body.classList.toggle('collapsed');
+            // 展开时恢复滚动，折叠时禁用
+            if (body.classList.contains('collapsed')) {
+                body.classList.remove('scrollable');
+            } else {
+                body.classList.add('scrollable');
+            }
+        }
+
         function format() {
             const input = document.getElementById('jsonInput').value.trim();
             const statusEl = document.getElementById('statusText');
@@ -219,7 +285,8 @@
 
             if (!input) {
                 statusEl.textContent = '等待输入...'; statusEl.className = 'status-info';
-                sizeEl.textContent = ''; outputEl.innerHTML = '<span style="color:#6c7086;">格式化结果将显示在这里</span>';
+                sizeEl.textContent = ''; resetOutputHeight();
+                outputEl.innerHTML = '<span style="color:#6c7086;">格式化结果将显示在这里</span>';
                 lastFormatted = ''; return;
             }
 
@@ -229,6 +296,7 @@
                 const formatted = JSON.stringify(obj, null, indent);
                 lastFormatted = formatted;
                 sizeEl.textContent = `${formatted.length} 字符`;
+                resetOutputHeight();
 
                 if (currentView === 'tree') {
                     renderTree(obj);
@@ -252,6 +320,7 @@
                 statusEl.textContent = '无效 JSON: ' + detail;
                 statusEl.className = 'status-invalid';
                 sizeEl.textContent = '';
+                resetOutputHeight();
                 outputEl.innerHTML = `<span style="color:#ef4444;">${escapeHtml(msg)}</span>`;
                 lastFormatted = '';
             }
@@ -279,12 +348,14 @@
             try {
                 const obj = JSON.parse(input);
                 const minified = JSON.stringify(obj);
+                resetOutputHeight();
                 document.getElementById('jsonOutput').innerHTML = syntaxHighlight(minified);
                 lastFormatted = minified;
                 document.getElementById('sizeInfo').textContent = `${minified.length} 字符`;
                 document.getElementById('statusText').textContent = '压缩成功';
                 document.getElementById('statusText').className = 'status-valid';
             } catch(e) {
+                resetOutputHeight();
                 document.getElementById('statusText').textContent = '无效 JSON: ' + e.message;
                 document.getElementById('statusText').className = 'status-invalid';
             }
@@ -296,6 +367,7 @@
         document.getElementById('copyBtn').addEventListener('click', () => copyText(lastFormatted));
         document.getElementById('clearBtn').addEventListener('click', () => {
             document.getElementById('jsonInput').value = '';
+            resetOutputHeight();
             document.getElementById('jsonOutput').innerHTML = '<span style="color:#6c7086;">格式化结果将显示在这里</span>';
             document.getElementById('statusText').textContent = '等待输入...';
             document.getElementById('statusText').className = 'status-info';
@@ -314,12 +386,69 @@
                     const input = document.getElementById('jsonInput').value.trim();
                     try {
                         const obj = JSON.parse(input);
+                        resetOutputHeight();
                         if (currentView === 'tree') renderTree(obj);
                         else document.getElementById('jsonOutput').innerHTML = syntaxHighlight(lastFormatted);
                     } catch(e) {}
                 }
             });
         });
+
+        // 拖拽调整输出区域高度
+        (function() {
+            const handle = document.getElementById('outputResizeHandle');
+            const outputBody = document.getElementById('outputBody');
+            const outputPanel = document.getElementById('outputPanel');
+            let startY, startHeight, isResizing = false;
+
+            handle.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                isResizing = true;
+                handle.classList.add('active');
+                startY = e.clientY;
+                startHeight = outputBody.offsetHeight;
+                document.body.style.cursor = 'ns-resize';
+                document.body.style.userSelect = 'none';
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isResizing) return;
+                const delta = e.clientY - startY;
+                const newHeight = Math.max(100, startHeight + delta);
+                outputBody.style.maxHeight = newHeight + 'px';
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (!isResizing) return;
+                isResizing = false;
+                handle.classList.remove('active');
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            });
+
+            // 触摸支持
+            handle.addEventListener('touchstart', function(e) {
+                const touch = e.touches[0];
+                isResizing = true;
+                handle.classList.add('active');
+                startY = touch.clientY;
+                startHeight = outputBody.offsetHeight;
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function(e) {
+                if (!isResizing) return;
+                const touch = e.touches[0];
+                const delta = touch.clientY - startY;
+                const newHeight = Math.max(100, startHeight + delta);
+                outputBody.style.maxHeight = newHeight + 'px';
+            }, { passive: true });
+
+            document.addEventListener('touchend', function() {
+                if (!isResizing) return;
+                isResizing = false;
+                handle.classList.remove('active');
+            });
+        })();
 
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof ComponentLoader !== 'undefined') {
