@@ -76,43 +76,43 @@
         }
         .json-input:focus { outline: none; background: #fff; }
         .json-output {
-            background: linear-gradient(145deg, #1e1e2e, #181825); color: #cdd6f4; overflow: auto;
+            background: #ffffff; color: #333; overflow: auto;
             white-space: pre-wrap; word-break: break-all;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
         }
 
         /* 拖拽调整手柄 */
         .resize-handle {
-            height: 5px; cursor: ns-resize; background: #2a2a3c; position: relative;
+            height: 8px; cursor: ns-resize; background: #f8f9fb; position: relative;
             display: flex; align-items: center; justify-content: center;
             transition: background 0.15s; flex-shrink: 0;
+            border-top: 1px solid #e9ecef;
         }
-        .resize-handle:hover, .resize-handle.active { background: var(--primary-color); }
+        .resize-handle:hover, .resize-handle.active { background: #eef0f4; }
         .resize-handle::after {
-            content: ''; width: 40px; height: 3px; border-radius: 2px;
-            background: #555; transition: background 0.15s;
+            content: ''; width: 36px; height: 3px; border-radius: 2px;
+            background: #d0d3da; transition: background 0.15s;
         }
-        .resize-handle:hover::after, .resize-handle.active::after { background: rgba(255,255,255,0.7); }
+        .resize-handle:hover::after, .resize-handle.active::after { background: var(--primary-color); }
 
         /* 语法高亮 */
-        .json-key { color: #89b4fa; }
-        .json-string { color: #a6e3a1; }
-        .json-number { color: #fab387; }
-        .json-boolean { color: #cba6f7; }
-        .json-null { color: #6c7086; font-style: italic; }
+        .json-key { color: #0451a5; }
+        .json-string { color: #a31515; }
+        .json-number { color: #098658; }
+        .json-boolean { color: #0000ff; }
+        .json-null { color: #808080; font-style: italic; }
 
         /* 树形视图 */
         .tree-toggle { cursor: pointer; user-select: none; border-radius: 4px; transition: background 0.15s; }
-        .tree-toggle:hover { background: rgba(255,255,255,0.05); }
+        .tree-toggle:hover { background: rgba(0,0,0,0.04); }
         .tree-content { padding-left: 20px; }
         .tree-collapsed .tree-content { display: none; }
-        .tree-key { color: #89b4fa; }
-        .tree-bracket { color: #6c7086; }
-        .tree-string { color: #a6e3a1; }
-        .tree-number { color: #fab387; }
-        .tree-boolean { color: #cba6f7; }
-        .tree-null { color: #6c7086; }
-        .tree-count { color: #6c7086; font-size: 0.85em; margin-left: 4px; }
+        .tree-key { color: #0451a5; }
+        .tree-bracket { color: #808080; }
+        .tree-string { color: #a31515; }
+        .tree-number { color: #098658; }
+        .tree-boolean { color: #0000ff; }
+        .tree-null { color: #808080; }
+        .tree-count { color: #808080; font-size: 0.85em; margin-left: 4px; }
 
         /* 状态栏 */
         .status-bar {
