@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../components/shared-styles.css">
     <script src="../components/load-components.js"></script>
     <style>
+        html { overflow-x: hidden; }
         /* 工具栏 */
         .toolbar {
             display: flex; gap: 5px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;
@@ -27,19 +28,37 @@
             cursor: pointer; background: white; color: #555; margin-left: 4px;
         }
         .indent-select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67,97,238,0.08); }
+        .toolbar-spacer { flex: 1; }
+        .tool-btn-icon {
+            width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 8px; border: 1px solid #dfe2e8; background: white; cursor: pointer;
+            font-size: 0.85rem; color: #555; transition: all 0.2s;
+        }
+        .tool-btn-icon:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(67,97,238,0.03); }
+        .tool-btn-icon.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
         /* 编辑区 */
-        .editor-grid { display: flex; flex-direction: column; gap: 12px; }
+        .editor-grid { display: flex; flex-direction: row; gap: 0; min-height: 500px; }
+        .editor-grid:not(.vertical) { height: calc(100vh - 300px); }
+        .editor-grid.vertical { flex-direction: column; height: auto; min-height: 600px; }
+        .tool-card.fullwidth {
+            position: relative; left: calc(-50vw + 50%); width: 100vw;
+        }
         .editor-panel {
             display: flex; flex-direction: column;
             border: 1px solid #e9ecef; border-radius: 10px; overflow: hidden;
-            transition: box-shadow 0.2s;
+            transition: box-shadow 0.2s; flex: 1 1 0; min-width: 0; min-height: 0;
         }
+        .editor-grid.vertical .editor-panel { flex: 1 1 auto; }
+        .editor-panel:first-child { border-radius: 10px 0 0 10px; }
+        .editor-panel:last-child { border-radius: 0 10px 10px 0; }
+        .editor-grid.vertical .editor-panel:first-child,
+        .editor-grid.vertical .editor-panel:last-child { border-radius: 10px; }
         .editor-panel:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
         .panel-header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 10px 14px; background: #f8f9fb; cursor: pointer; user-select: none;
-            border-bottom: 1px solid #e9ecef; transition: background 0.15s;
+            border-bottom: 1px solid #e9ecef; transition: background 0.15s; flex-shrink: 0;
         }
         .panel-header:hover { background: #f0f2f6; }
         .panel-header-left {
@@ -56,17 +75,20 @@
         .panel-toggle:hover { background: #e9ecef; color: #555; }
         .panel-body {
             overflow: hidden; transition: max-height 0.3s ease, opacity 0.25s ease;
-            max-height: 600px; opacity: 1;
+            max-height: 600px; opacity: 1; flex: 1; display: flex; flex-direction: column;
         }
-        .panel-body.collapsed { max-height: 0; opacity: 0; }
+        .editor-grid:not(.vertical) .panel-body { max-height: none; }
+        .panel-body.collapsed { max-height: 0; opacity: 0; flex: 0 0 0; }
         .panel-body.scrollable { overflow: auto; }
         .panel-header .fa-chevron-up { transition: transform 0.3s ease; }
         .editor-panel.collapsed .panel-header .fa-chevron-up { transform: rotate(180deg); }
         .json-input, .json-output {
             width: 100%; min-height: 300px; padding: 12px; border: none;
             font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
-            font-size: 0.82rem; resize: vertical; line-height: 1.6;
+            font-size: 0.82rem; resize: none; line-height: 1.6;
         }
+        .editor-grid:not(.vertical) .json-input,
+        .editor-grid:not(.vertical) .json-output { flex: 1; }
         .json-input {
             background: #fdfdfe;
             background-image: repeating-linear-gradient(
@@ -82,15 +104,22 @@
 
         /* 拖拽调整手柄 */
         .resize-handle {
-            height: 8px; cursor: ns-resize; background: #f8f9fb; position: relative;
+            cursor: ew-resize; background: #f8f9fb; position: relative;
             display: flex; align-items: center; justify-content: center;
-            transition: background 0.15s; flex-shrink: 0;
-            border-top: 1px solid #e9ecef;
+            transition: background 0.15s; flex-shrink: 0; width: 8px;
+        }
+        .editor-grid.vertical .resize-handle {
+            width: 100%; height: 8px; cursor: ns-resize;
         }
         .resize-handle:hover, .resize-handle.active { background: #eef0f4; }
         .resize-handle::after {
-            content: ''; width: 36px; height: 3px; border-radius: 2px;
-            background: #d0d3da; transition: background 0.15s;
+            content: ''; border-radius: 2px; background: #d0d3da; transition: background 0.15s;
+        }
+        .editor-grid:not(.vertical) .resize-handle::after {
+            width: 3px; height: 36px; border-radius: 2px;
+        }
+        .editor-grid.vertical .resize-handle::after {
+            width: 36px; height: 3px; border-radius: 2px;
         }
         .resize-handle:hover::after, .resize-handle.active::after { background: var(--primary-color); }
 
@@ -134,6 +163,16 @@
         .view-tab:hover:not(.active) { color: #333; }
 
         @media (max-width: 768px) {
+            .tool-card.fullwidth { position: static; left: auto; width: auto; }
+            .editor-grid:not(.vertical) { height: auto; }
+            .editor-grid { flex-direction: column; height: auto; min-height: 600px; }
+            .editor-grid .editor-panel { flex: 1 1 auto; }
+            .editor-grid .editor-panel:first-child,
+            .editor-grid .editor-panel:last-child { border-radius: 10px; }
+            .editor-grid .panel-body { max-height: 600px; }
+            .editor-grid .json-input, .editor-grid .json-output { flex: 0 0 auto; min-height: 200px; resize: vertical; }
+            .editor-grid .resize-handle { width: 100%; height: 8px; cursor: ns-resize; }
+            .editor-grid .resize-handle::after { width: 36px; height: 3px; }
             .json-input, .json-output { min-height: 200px; }
         }
     </style>
@@ -143,8 +182,8 @@
     <main class="container tool-main">
         <h1 class="tool-page-title"><i class="fas fa-code" style="color:#ff9e00;"></i> JSON格式化</h1>
         <p class="tool-page-subtitle">格式化、验证、压缩 JSON 数据，支持语法高亮与树形视图</p>
-        <div class="tool-content">
-        <div class="tool-card">
+        <div class="tool-content-wide">
+        <div class="tool-card fullwidth">
             <div class="toolbar">
                 <button class="tool-btn tool-btn-primary" id="formatBtn"><i class="fas fa-magic"></i> 格式化</button>
                 <button class="tool-btn tool-btn-outline" id="minifyBtn"><i class="fas fa-compress"></i> 压缩</button>
@@ -154,11 +193,16 @@
                     <option value="tab">缩进: Tab</option>
                 </select>
                 <button class="tool-btn tool-btn-outline" id="sampleBtn"><i class="fas fa-file-code"></i> 示例</button>
-                <button class="tool-btn tool-btn-outline" id="copyBtn"><i class="fas fa-copy"></i> 复制结果</button>
                 <button class="tool-btn tool-btn-outline" id="clearBtn"><i class="fas fa-trash"></i> 清空</button>
+                <button class="tool-btn tool-btn-outline" id="unescapeBtn"><i class="fas fa-arrow-left"></i> 去除转义</button>
+                <button class="tool-btn tool-btn-outline" id="escapeBtn"><i class="fas fa-arrow-right"></i> 加上转义</button>
+                <button class="tool-btn tool-btn-outline" id="unicodeBtn"><i class="fas fa-language"></i> Unicode转中文</button>
+                <span class="toolbar-spacer"></span>
+                <button class="tool-btn tool-btn-outline" id="copyBtn"><i class="fas fa-copy"></i> 复制结果</button>
+                <button class="tool-btn-icon" id="layoutToggleBtn" title="切换布局方向"><i class="fas fa-columns"></i></button>
             </div>
 
-            <div class="editor-grid">
+            <div class="editor-grid" id="editorGrid">
                 <div class="editor-panel" id="inputPanel">
                     <div class="panel-header" onclick="togglePanel('inputPanel')">
                         <div class="panel-header-left"><i class="fas fa-edit"></i> 输入 JSON</div>
@@ -168,6 +212,7 @@
                         <textarea class="json-input" id="jsonInput" placeholder="在此粘贴 JSON 数据..." spellcheck="false"></textarea>
                     </div>
                 </div>
+                <div class="resize-handle" id="layoutResizeHandle"></div>
                 <div class="editor-panel" id="outputPanel">
                     <div class="panel-header" onclick="togglePanel('outputPanel')">
                         <div class="panel-header-left"><i class="fas fa-eye"></i> 输出结果</div>
@@ -182,7 +227,6 @@
                     <div class="panel-body scrollable" id="outputBody">
                         <div class="json-output" id="jsonOutput"><span style="color:#6c7086;">格式化结果将显示在这里</span></div>
                     </div>
-                    <div class="resize-handle" id="outputResizeHandle"></div>
                 </div>
             </div>
 
@@ -215,7 +259,10 @@
 
         function resetOutputHeight() {
             const body = document.getElementById('outputBody');
-            body.style.maxHeight = '';
+            const grid = document.getElementById('editorGrid');
+            if (grid && grid.classList.contains('vertical')) {
+                body.style.maxHeight = '';
+            }
         }
 
         function getIndent() {
@@ -262,6 +309,61 @@
 
         function escapeHtml(str) {
             return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function unescapeInput() {
+            const ta = document.getElementById('jsonInput');
+            const val = ta.value;
+            if (!val) return;
+            try {
+                ta.value = JSON.parse('"' + val + '"');
+            } catch(e) {
+                ta.value = val.replace(/\\([\\"'\/bfnrtu])/g, (m, c) => {
+                    switch(c) {
+                        case 'n': return '\n';
+                        case 't': return '\t';
+                        case 'r': return '\r';
+                        case 'b': return '\b';
+                        case 'f': return '\f';
+                        case '\\': return '\\';
+                        case '"': return '"';
+                        case '\'': return '\'';
+                        case '/': return '/';
+                        default: return m;
+                    }
+                });
+            }
+            format();
+        }
+
+        function escapeInput() {
+            const ta = document.getElementById('jsonInput');
+            const val = ta.value;
+            if (!val) return;
+            ta.value = JSON.stringify(val).slice(1, -1);
+            format();
+        }
+
+        function unicodeToChinese() {
+            const ta = document.getElementById('jsonInput');
+            const val = ta.value;
+            if (!val) return;
+            ta.value = val.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+            format();
+        }
+
+        function toggleLayout() {
+            const grid = document.getElementById('editorGrid');
+            const btn = document.getElementById('layoutToggleBtn');
+            const card = document.querySelector('.tool-card');
+            const inputPanel = document.getElementById('inputPanel');
+            const outputPanel = document.getElementById('outputPanel');
+            const isVertical = grid.classList.toggle('vertical');
+            btn.classList.toggle('active');
+            card.classList.toggle('fullwidth', !isVertical);
+            inputPanel.style.flexBasis = '';
+            outputPanel.style.flexBasis = '';
+            resetOutputHeight();
         }
 
         function togglePanel(panelId) {
@@ -334,12 +436,26 @@
         function copyText(text) {
             const btn = document.getElementById('copyBtn');
             if (!text) return;
-            if (navigator.clipboard) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => {
                     btn.innerHTML = '<i class="fas fa-check"></i> 已复制';
                     setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> 复制结果'; }, 1500);
-                }).catch(() => {});
+                }).catch(() => fallbackCopy(text, btn));
+            } else {
+                fallbackCopy(text, btn);
             }
+        }
+
+        function fallbackCopy(text, btn) {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try {
+                document.execCommand('copy');
+                btn.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> 复制结果'; }, 1500);
+            } catch(e) {}
+            document.body.removeChild(ta);
         }
 
         document.getElementById('formatBtn').addEventListener('click', format);
@@ -375,6 +491,10 @@
             lastFormatted = '';
         });
         document.getElementById('indentSelect').addEventListener('change', format);
+        document.getElementById('unescapeBtn').addEventListener('click', unescapeInput);
+        document.getElementById('escapeBtn').addEventListener('click', escapeInput);
+        document.getElementById('unicodeBtn').addEventListener('click', unicodeToChinese);
+        document.getElementById('layoutToggleBtn').addEventListener('click', toggleLayout);
 
         // View tabs
         document.querySelectorAll('.view-tab').forEach(tab => {
@@ -394,28 +514,41 @@
             });
         });
 
-        // 拖拽调整输出区域高度
+        // 拖拽调整面板大小
         (function() {
-            const handle = document.getElementById('outputResizeHandle');
-            const outputBody = document.getElementById('outputBody');
+            const handle = document.getElementById('layoutResizeHandle');
+            const grid = document.getElementById('editorGrid');
+            const inputPanel = document.getElementById('inputPanel');
             const outputPanel = document.getElementById('outputPanel');
-            let startY, startHeight, isResizing = false;
+            let startPos, startInputSize, startOutputSize, isResizing = false;
+
+            function getMode() {
+                return grid.classList.contains('vertical') ? 'vertical' : 'horizontal';
+            }
 
             handle.addEventListener('mousedown', function(e) {
                 e.preventDefault();
                 isResizing = true;
                 handle.classList.add('active');
-                startY = e.clientY;
-                startHeight = outputBody.offsetHeight;
-                document.body.style.cursor = 'ns-resize';
+                const mode = getMode();
+                startPos = mode === 'horizontal' ? e.clientX : e.clientY;
+                startInputSize = mode === 'horizontal' ? inputPanel.offsetWidth : inputPanel.offsetHeight;
+                startOutputSize = mode === 'horizontal' ? outputPanel.offsetWidth : outputPanel.offsetHeight;
+                document.body.style.cursor = mode === 'horizontal' ? 'ew-resize' : 'ns-resize';
                 document.body.style.userSelect = 'none';
             });
 
             document.addEventListener('mousemove', function(e) {
                 if (!isResizing) return;
-                const delta = e.clientY - startY;
-                const newHeight = Math.max(100, startHeight + delta);
-                outputBody.style.maxHeight = newHeight + 'px';
+                const mode = getMode();
+                const currentPos = mode === 'horizontal' ? e.clientX : e.clientY;
+                const delta = currentPos - startPos;
+                const totalSize = startInputSize + startOutputSize;
+                const newInputSize = Math.max(100, Math.min(totalSize - 100, startInputSize + delta));
+                inputPanel.style.flex = '0 0 ' + newInputSize + 'px';
+                inputPanel.style.flexBasis = newInputSize + 'px';
+                outputPanel.style.flex = '0 0 ' + (totalSize - newInputSize) + 'px';
+                outputPanel.style.flexBasis = (totalSize - newInputSize) + 'px';
             });
 
             document.addEventListener('mouseup', function() {
@@ -431,16 +564,24 @@
                 const touch = e.touches[0];
                 isResizing = true;
                 handle.classList.add('active');
-                startY = touch.clientY;
-                startHeight = outputBody.offsetHeight;
+                const mode = getMode();
+                startPos = mode === 'horizontal' ? touch.clientX : touch.clientY;
+                startInputSize = mode === 'horizontal' ? inputPanel.offsetWidth : inputPanel.offsetHeight;
+                startOutputSize = mode === 'horizontal' ? outputPanel.offsetWidth : outputPanel.offsetHeight;
             }, { passive: true });
 
             document.addEventListener('touchmove', function(e) {
                 if (!isResizing) return;
+                const mode = getMode();
                 const touch = e.touches[0];
-                const delta = touch.clientY - startY;
-                const newHeight = Math.max(100, startHeight + delta);
-                outputBody.style.maxHeight = newHeight + 'px';
+                const currentPos = mode === 'horizontal' ? touch.clientX : touch.clientY;
+                const delta = currentPos - startPos;
+                const totalSize = startInputSize + startOutputSize;
+                const newInputSize = Math.max(100, Math.min(totalSize - 100, startInputSize + delta));
+                inputPanel.style.flex = '0 0 ' + newInputSize + 'px';
+                inputPanel.style.flexBasis = newInputSize + 'px';
+                outputPanel.style.flex = '0 0 ' + (totalSize - newInputSize) + 'px';
+                outputPanel.style.flexBasis = (totalSize - newInputSize) + 'px';
             }, { passive: true });
 
             document.addEventListener('touchend', function() {
